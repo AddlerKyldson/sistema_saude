@@ -58,3 +58,4 @@ D:\NISIA FLORESTA\Desktop\Addler\dev\sistema_saude\obj\Debug\net8.0\refint\siste
 D:\NISIA FLORESTA\Desktop\Addler\dev\sistema_saude\obj\Debug\net8.0\sistema_saude.pdb
 D:\NISIA FLORESTA\Desktop\Addler\dev\sistema_saude\obj\Debug\net8.0\sistema_saude.genruntimeconfig.cache
 D:\NISIA FLORESTA\Desktop\Addler\dev\sistema_saude\obj\Debug\net8.0\ref\sistema_saude.dll
+D:\NISIA FLORESTA\Desktop\Addler\dev\sistema_saude\obj\Debug\net8.0\sistema_saude.sourcelink.json

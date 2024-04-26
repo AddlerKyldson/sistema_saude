@@ -1,0 +1,23 @@
+namespace sistema_saude.Models
+{
+    public class Regional
+    {
+        public int Id { get; set; }
+        public string Nome { get; set; }
+        public int Id_Estado { get; set; }
+        public int Status { get; set; }
+        public int Id_Usuario_Cadastro { get; set; }
+        public int? Id_Usuario_Alteracao { get; set; }
+        public DateTimeOffset Data_Cadastro { get; set; }
+        public DateTime? Data_Alteracao { get; set; } // Pode ser NULL
+        public string Slug { get; set; }
+        public ICollection<Cidade> Cidade { get; set; } // Lista de Cidades relacionadas
+
+        // Navegação para Estado
+        public virtual Estado Estado { get; set; }
+
+        /* public virtual Bairro BairroNavigation { get; set; }
+        public virtual Estado Id_Estado_CadastroNavigation { get; set; }
+        public virtual Estado Id_Estado_AlteracaoNavigation { get; set; } */
+    }
+}

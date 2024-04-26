@@ -32,7 +32,6 @@ config.ini
 /tests/
 
 # Arquivos de dados sensíveis
-/data/
 
 # Arquivos de build
 /build/
