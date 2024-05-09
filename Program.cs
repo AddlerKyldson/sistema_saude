@@ -1,12 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using sistema_saude.Data;
+using System.Text.Json.Serialization; // Importe o namespace para JsonSerializerOptions
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers(); // Adiciona o serviço MVC
+builder.Services.AddControllers() // Adiciona o serviço MVC
+    .AddJsonOptions(options => {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve; // Adiciona suporte para referências circulares
+        options.JsonSerializerOptions.WriteIndented = true; // Torna o JSON de saída formatado de forma legível
+    });
 builder.Services.AddDbContext<MyDbContext>(options => // Registra o DbContext
     options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
