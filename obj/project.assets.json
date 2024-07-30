@@ -3868,7 +3868,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ADDLER\\.nuget\\packages\\": {}
+    "C:\\Users\\Dev\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
@@ -3876,11 +3876,11 @@
       "projectUniqueName": "C:\\xampp\\htdocs\\sistema_saude\\sistema_saude\\sistema_saude.csproj",
       "projectName": "sistema_saude",
       "projectPath": "C:\\xampp\\htdocs\\sistema_saude\\sistema_saude\\sistema_saude.csproj",
-      "packagesPath": "C:\\Users\\ADDLER\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\Dev\\.nuget\\packages\\",
       "outputPath": "C:\\xampp\\htdocs\\sistema_saude\\sistema_saude\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\ADDLER\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Dev\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"

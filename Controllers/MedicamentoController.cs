@@ -145,7 +145,7 @@ namespace sistema_saude.Controllers
 
 
         [HttpGet("CodigoBarras/{Codigo_Barras}")]
-        public async Task<ActionResult<Medicamento>> GetMedicamentoByCodigoBarras(int Codigo_Barras)
+        public async Task<ActionResult<Medicamento>> GetMedicamentoByCodigoBarras(string Codigo_Barras)
         {
             var medicamento = await _context.Medicamento
                                     .FirstOrDefaultAsync(m => m.Codigo_Barras == Codigo_Barras);
@@ -161,21 +161,30 @@ namespace sistema_saude.Controllers
         [HttpPost]
         public async Task<ActionResult<Medicamento>> PostMedicamento([FromBody] MedicamentoCreateDto medicamentoDto)
         {
-            var medicamento = new Medicamento
+            try
             {
-                Nome = medicamentoDto.Nome,
-                Apelido = medicamentoDto.Apelido,
-                Codigo_Barras = medicamentoDto.Codigo_Barras,
-                Estoque = medicamentoDto.Estoque,
-                Id_Usuario_Cadastro = medicamentoDto.Id_Usuario_Cadastro,
-                Slug = medicamentoDto.Slug,
-                Data_Cadastro = DateTime.UtcNow, // Definir a data de cadastro para agora
-            };
+                var medicamento = new Medicamento
+                {
+                    Nome = medicamentoDto.Nome,
+                    Apelido = medicamentoDto.Apelido,
+                    Codigo_Barras = medicamentoDto.Codigo_Barras,
+                    Estoque = medicamentoDto.Estoque,
+                    Id_Usuario_Cadastro = medicamentoDto.Id_Usuario_Cadastro,
+                    Slug = medicamentoDto.Slug,
+                    Data_Cadastro = DateTime.UtcNow, // Definir a data de cadastro para agora
+                };
 
-            _context.Medicamento.Add(medicamento);
-            await _context.SaveChangesAsync();
+                _context.Medicamento.Add(medicamento);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMedicamento", new { id = medicamento.Id }, medicamento);
+                return CreatedAtAction("GetMedicamento", new { id = medicamento.Id }, medicamento);
+            }
+            catch (Exception e)
+            {
+                //mostrar no log
+                System.Console.WriteLine(e.Message);
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPut("{id}")]

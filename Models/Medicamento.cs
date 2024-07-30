@@ -5,7 +5,7 @@ namespace sistema_saude.Models
         public int Id { get; set; }
         public string Nome { get; set; }
         public string Apelido { get; set; }
-        public int Codigo_Barras { get; set; }
+        public string Codigo_Barras { get; set; }
         public int Estoque { get; set; }
         public int Id_Usuario_Cadastro { get; set; }
         public int? Id_Usuario_Alteracao { get; set; }

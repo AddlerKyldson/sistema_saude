@@ -5,7 +5,7 @@ using sistema_saude.Models;
 public static class MedicamentoService
 {
     public static async Task VerificarMedicamentoPorCodigoBarrasAsync(
-        int codigoBarras,
+        string codigoBarras,
         string nome,
         int quantidade,
         int tipo,
@@ -44,7 +44,7 @@ public static class MedicamentoService
     }
 
     private static async Task AdicionarNovoMedicamentoAsync(
-        int codigoBarras,
+        string codigoBarras,
         string nome,
         int quantidade,
         MyDbContext context
@@ -68,7 +68,7 @@ public static class MedicamentoService
     }
 
     public static async Task subtractMedicamentoEstoqueAsync(
-        int codigoBarras,
+        string codigoBarras,
         int quantidade,
         MyDbContext context
     )
@@ -97,7 +97,7 @@ public static class MedicamentoService
     }
 
     public static async Task addMecitamentoEstoqueAsync(
-        int codigoBarras,
+        string codigoBarras,
         int quantidade,
         MyDbContext context
     )

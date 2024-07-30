@@ -3,7 +3,7 @@ namespace sistema_saude.Models
     public class Medicamento_Movimentacao_Item
     {
         public int Id { get; set; }
-        public int Id_Medicamento { get; set; }
+        public string Id_Medicamento { get; set; }
         public int Id_Medicamento_Movimentacao { get; set; }
         public int Quantidade { get; set; }
         public int Id_Usuario_Cadastro { get; set; }
