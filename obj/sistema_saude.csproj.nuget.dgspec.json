@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\NISIA FLORESTA\\Desktop\\Addler\\dev\\sistema_saude\\sistema_saude.csproj": {}
+    "C:\\xampp\\htdocs\\sistema_saude\\sistema_saude\\sistema_saude.csproj": {}
   },
   "projects": {
-    "D:\\NISIA FLORESTA\\Desktop\\Addler\\dev\\sistema_saude\\sistema_saude.csproj": {
+    "C:\\xampp\\htdocs\\sistema_saude\\sistema_saude\\sistema_saude.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\NISIA FLORESTA\\Desktop\\Addler\\dev\\sistema_saude\\sistema_saude.csproj",
+        "projectUniqueName": "C:\\xampp\\htdocs\\sistema_saude\\sistema_saude\\sistema_saude.csproj",
         "projectName": "sistema_saude",
-        "projectPath": "D:\\NISIA FLORESTA\\Desktop\\Addler\\dev\\sistema_saude\\sistema_saude.csproj",
-        "packagesPath": "C:\\Users\\NISIA FLORESTA\\.nuget\\packages\\",
-        "outputPath": "D:\\NISIA FLORESTA\\Desktop\\Addler\\dev\\sistema_saude\\obj\\",
+        "projectPath": "C:\\xampp\\htdocs\\sistema_saude\\sistema_saude\\sistema_saude.csproj",
+        "packagesPath": "C:\\Users\\ADDLER\\.nuget\\packages\\",
+        "outputPath": "C:\\xampp\\htdocs\\sistema_saude\\sistema_saude\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\NISIA FLORESTA\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\ADDLER\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -43,6 +43,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "EPPlus": {
+              "target": "Package",
+              "version": "[7.2.2, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.7, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[8.0.3, )"
@@ -79,7 +87,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.203/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

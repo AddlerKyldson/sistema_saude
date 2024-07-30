@@ -19,6 +19,8 @@ namespace sistema_saude.Models
         public int? Id_Usuario_Alteracao { get; set; }
         public DateTimeOffset Data_Cadastro { get; set; }
         public DateTime? Data_Alteracao { get; set; } // Pode ser NULL
+        public string Permissoes { get; set; }
+        public int Tipo { get; set; }
         public string Slug { get; set; }
 
         /* public virtual Bairro BairroNavigation { get; set; }

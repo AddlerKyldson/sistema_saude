@@ -8,6 +8,7 @@ public static class MedicamentoService
         int codigoBarras,
         string nome,
         int quantidade,
+        int tipo,
         MyDbContext context
     )
     {
@@ -25,7 +26,14 @@ public static class MedicamentoService
             );
 
             // Atualizar o estoque do medicamento
-            medicamento.Estoque += quantidade;
+            if (tipo == 1)
+            {
+                medicamento.Estoque += quantidade;
+            }
+            else if (tipo == 2)
+            {
+                medicamento.Estoque -= quantidade;
+            }
             await context.SaveChangesAsync();
         }
         else
@@ -80,6 +88,35 @@ public static class MedicamentoService
 
             // Atualizar o estoque do medicamento
             medicamento.Estoque -= quantidade;
+            await context.SaveChangesAsync();
+        }
+        else
+        {
+            Console.WriteLine("Nenhum medicamento encontrado com o código de barras fornecido.");
+        }
+    }
+
+    public static async Task addMecitamentoEstoqueAsync(
+        int codigoBarras,
+        int quantidade,
+        MyDbContext context
+    )
+    {
+        // Criar um comando SQL para selecionar o medicamento com o código de barras especificado
+        var sql = $"SELECT * FROM Medicamento WHERE Codigo_Barras = {codigoBarras}";
+
+        // Executar o comando SQL
+        var medicamento = await context.Medicamento.FromSqlRaw(sql).FirstOrDefaultAsync();
+
+        if (medicamento != null)
+        {
+            // Medicamento encontrado, imprimir os detalhes
+            Console.WriteLine(
+                $"Medicamento encontrado: ID: {medicamento.Id}, Nome: {medicamento.Nome}, Código de Barras: {medicamento.Codigo_Barras}"
+            );
+
+            // Atualizar o estoque do medicamento
+            medicamento.Estoque += quantidade;
             await context.SaveChangesAsync();
         }
         else

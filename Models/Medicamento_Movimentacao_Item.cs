@@ -8,7 +8,7 @@ namespace sistema_saude.Models
         public int Quantidade { get; set; }
         public int Id_Usuario_Cadastro { get; set; }
         public int? Id_Usuario_Alteracao { get; set; }
-        public DateTimeOffset Data_Cadastro { get; set; }
+        public DateTimeOffset? Data_Cadastro { get; set; }
         public DateTime? Data_Alteracao { get; set; } // Pode ser NULL
 
         //Navegação para Medicamento_Movimentacao

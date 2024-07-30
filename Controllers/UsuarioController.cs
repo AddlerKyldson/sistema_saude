@@ -57,6 +57,8 @@ namespace sistema_saude.Controllers
                 Status = usuarioDto.Status,
                 Id_Usuario_Cadastro = usuarioDto.Id_Usuario_Cadastro,
                 Slug = usuarioDto.Slug,
+                Permissoes = usuarioDto.Permissoes,
+                Tipo = usuarioDto.Tipo,
                 Data_Cadastro = DateTime.UtcNow, // Definir a data de cadastro para agora
             };
 
@@ -89,6 +91,8 @@ namespace sistema_saude.Controllers
             usuario.CEP = usuarioDto.CEP;
             usuario.Status = usuarioDto.Status;
             usuario.Id_Usuario_Cadastro = usuarioDto.Id_Usuario_Cadastro;
+            usuario.Permissoes = usuarioDto.Permissoes;
+            usuario.Tipo = usuarioDto.Tipo;
             usuario.Slug = usuarioDto.Slug;
 
             await _context.SaveChangesAsync();

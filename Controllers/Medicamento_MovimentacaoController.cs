@@ -18,14 +18,27 @@ namespace sistema_saude.Controllers
             _context = context;
         }
 
-        // GET: api/Medicamento_Movimentacaos
+        // GET: api/Medicamento_Movimentacao
         [HttpGet]
-        public async Task<
-            ActionResult<IEnumerable<Medicamento_Movimentacao>>
-        > GetMedicamento_Movimentacao()
+        public async Task<ActionResult<IEnumerable<Medicamento_Movimentacao>>> GetMedicamento_Movimentacao([FromQuery] string tipo, [FromQuery] string? filtro_busca = null)
         {
-            return await _context.Medicamento_Movimentacao.ToListAsync();
+            if (string.IsNullOrEmpty(tipo))
+            {
+                return await _context.Medicamento_Movimentacao.ToListAsync();
+            }
+
+            var tipoInt = int.Parse(tipo);
+            var query = _context.Medicamento_Movimentacao.Where(m => m.Tipo == tipoInt);
+
+            if (!string.IsNullOrEmpty(filtro_busca))
+            {
+                query = query.Where(m => m.Descricao.Contains(filtro_busca));
+            }
+
+            var movimentacoesFiltradas = await query.ToListAsync();
+            return movimentacoesFiltradas;
         }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Medicamento_Movimentacao>> GetMedicamento_Movimentacao(
@@ -67,8 +80,8 @@ namespace sistema_saude.Controllers
                         var itemDto in medicamento_movimentacaoDto.Medicamento_Movimentacao_Item
                     )
                     {
-                        
-                        await MedicamentoService.VerificarMedicamentoPorCodigoBarrasAsync(itemDto.Codigo_Barras, itemDto.Nome, itemDto.Quantidade, _context);
+
+                        await MedicamentoService.VerificarMedicamentoPorCodigoBarrasAsync(itemDto.Codigo_Barras, itemDto.Nome, itemDto.Quantidade, medicamento_movimentacaoDto.Tipo, _context);
 
                         var item = new Medicamento_Movimentacao_Item
                         {
@@ -123,28 +136,60 @@ namespace sistema_saude.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMedicamento_Movimentacao(int id)
         {
-        
-            //subtraimos a quantidade de medicamentos do estoque
-
-            var medicamento_movimentacao_item = await _context.Medicamento_Movimentacao_Item.Where(x => x.Id_Medicamento_Movimentacao == id).ToListAsync();
-
-            foreach (var item in medicamento_movimentacao_item)
+            try
             {
-                //mostrar item no console
-                Console.WriteLine(item.Id_Medicamento);
-                await MedicamentoService.subtractMedicamentoEstoqueAsync(item.Id_Medicamento, item.Quantidade, _context);
-            }
+                Console.WriteLine($"Iniciando exclusão de Medicamento_Movimentacao com Id: {id}");
 
-            var medicamento_movimentacao = await _context.Medicamento_Movimentacao.FindAsync(id);
-            if (medicamento_movimentacao == null)
+                var medicamento_movimentacao_item = await _context.Medicamento_Movimentacao_Item
+                    .Where(x => x.Id_Medicamento_Movimentacao == id)
+                    .ToListAsync();
+
+                Console.WriteLine($"Itens de movimentação carregados: {medicamento_movimentacao_item.Count}");
+
+                var medicamento_movimentacao = await _context.Medicamento_Movimentacao.FindAsync(id);
+                if (medicamento_movimentacao == null)
+                {
+                    Console.WriteLine($"Medicamento_Movimentacao com Id: {id} não encontrado");
+                    return NotFound();
+                }
+
+                foreach (var item in medicamento_movimentacao_item)
+                {
+                    try
+                    {
+                        Console.WriteLine($"Processando item com Id_Medicamento: {item.Id_Medicamento}, Quantidade: {item.Quantidade}");
+
+                        if (medicamento_movimentacao.Tipo == 1)
+                        {
+                            await MedicamentoService.subtractMedicamentoEstoqueAsync(item.Id_Medicamento, item.Quantidade, _context);
+                        }
+                        else
+                        {
+                            await MedicamentoService.addMecitamentoEstoqueAsync(item.Id_Medicamento, item.Quantidade, _context);
+                        }
+
+                        Console.WriteLine($"Item processado com sucesso: Id_Medicamento: {item.Id_Medicamento}, Quantidade: {item.Quantidade}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine($"Erro ao processar item com Id_Medicamento: {item.Id_Medicamento}, Quantidade: {item.Quantidade}. Erro: {ex.Message}");
+                        throw;
+                    }
+                }
+
+                _context.Medicamento_Movimentacao.Remove(medicamento_movimentacao);
+                await _context.SaveChangesAsync();
+
+                Console.WriteLine($"Medicamento_Movimentacao com Id: {id} excluído com sucesso");
+                return NoContent();
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                // Logar o erro detalhado para depuração
+                Console.Error.WriteLine($"Erro ao deletar Medicamento_Movimentacao com Id: {id}. Erro: {ex.Message}");
+                Console.Error.WriteLine($"Stack Trace: {ex.StackTrace}");
+                return StatusCode(500, "Ocorreu um erro ao processar a solicitação.");
             }
-
-            _context.Medicamento_Movimentacao.Remove(medicamento_movimentacao);
-            await _context.SaveChangesAsync();
-
-            return NoContent(); // Retorna uma resposta 204 No Content para indicar sucesso sem conteúdo de retorno
         }
     }
 }
