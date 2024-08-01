@@ -24,18 +24,38 @@ namespace sistema_saude.Controllers
 
         // GET: api/Medicamentos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Medicamento>>> GetMedicamento([FromQuery] string? filtro_busca = null)
+        public async Task<ActionResult> GetMedicamento([FromQuery] string? filtro_busca = null, [FromQuery] int page = 1, [FromQuery] int perPage = 20)
         {
-            if (string.IsNullOrEmpty(filtro_busca))
+            // Verifica se a página é válida
+            if (page < 1)
             {
-                return await _context.Medicamento.ToListAsync();
+                return BadRequest("Page must be greater than or equal to 1.");
             }
 
-            var medicamentosFiltrados = await _context.Medicamento
-                .Where(m => m.Nome.Contains(filtro_busca) || m.Apelido.Contains(filtro_busca) || m.Codigo_Barras.ToString().Contains(filtro_busca))
+            // Consulta básica de medicamentos
+            var query = _context.Medicamento.AsQueryable();
+
+            // Filtragem por busca, se aplicável
+            if (!string.IsNullOrEmpty(filtro_busca))
+            {
+                query = query.Where(m => m.Nome.Contains(filtro_busca) || m.Apelido.Contains(filtro_busca) || m.Codigo_Barras.Contains(filtro_busca));
+            }
+
+            // Obtém o total de itens filtrados
+            var total = await query.CountAsync();
+
+            // Paginação
+            var medicamentosFiltrados = await query
+                .Skip((page - 1) * perPage)
+                .Take(perPage)
                 .ToListAsync();
 
-            return medicamentosFiltrados;
+            // Retorna os dados e o total de itens
+            return Ok(new
+            {
+                total,
+                dados = medicamentosFiltrados
+            });
         }
 
         [HttpGet("gerar_excel")]
@@ -128,7 +148,7 @@ namespace sistema_saude.Controllers
             }
             else if (coluna == "codigo_barras")
             {
-                query = query.Where(m => m.Codigo_Barras.ToString().Contains(parametro));
+                query = query.Where(m => m.Codigo_Barras.Contains(parametro));
             }
 
             var medicamentos = await query.ToListAsync();
