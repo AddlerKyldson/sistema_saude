@@ -20,23 +20,44 @@ namespace sistema_saude.Controllers
 
         // GET: api/Medicamento_Movimentacao
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Medicamento_Movimentacao>>> GetMedicamento_Movimentacao([FromQuery] string tipo, [FromQuery] string? filtro_busca = null)
+        public async Task<ActionResult<IEnumerable<Medicamento_Movimentacao>>> GetMedicamento_Movimentacao([FromQuery] string tipo, [FromQuery] string? filtro_busca = null, [FromQuery] int page = 1, [FromQuery] int perPage = 20)
         {
-            if (string.IsNullOrEmpty(tipo))
+            // Verifica se a página é válida
+            if (page < 1)
             {
-                return await _context.Medicamento_Movimentacao.ToListAsync();
+                return BadRequest("Page must be greater than or equal to 1.");
             }
 
-            var tipoInt = int.Parse(tipo);
-            var query = _context.Medicamento_Movimentacao.Where(m => m.Tipo == tipoInt);
+            // Consulta básica de medicamentos
+            var query = _context.Medicamento_Movimentacao.AsQueryable();
 
+            // Filtragem por busca, se aplicável
             if (!string.IsNullOrEmpty(filtro_busca))
             {
                 query = query.Where(m => m.Descricao.Contains(filtro_busca));
             }
 
-            var movimentacoesFiltradas = await query.ToListAsync();
-            return movimentacoesFiltradas;
+            // Filtragem por tipo, se aplicável
+            if (!string.IsNullOrEmpty(tipo))
+            {
+                query = query.Where(m => m.Tipo == int.Parse(tipo));
+            }
+
+            // Obtém o total de itens filtrados
+            var total = await query.CountAsync();
+
+            // Paginação
+            var medicamentosFiltrados = await query
+                .Skip((page - 1) * perPage)
+                .Take(perPage)
+                .ToListAsync();
+
+            // Retorna os dados e o total de itens
+            return Ok(new
+            {
+                total,
+                dados = medicamentosFiltrados
+            });
         }
 
 

@@ -1,13 +1,10 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using sistema_saude.Data;
 using sistema_saude.Models;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using System.IO;
-using Microsoft.AspNetCore.Mvc;
 
 namespace sistema_saude.Controllers
 {
