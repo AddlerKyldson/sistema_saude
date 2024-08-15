@@ -17,6 +17,8 @@ namespace sistema_saude.Data
         public DbSet<Medicamento> Medicamento { get; set; }
         public DbSet<Medicamento_Movimentacao> Medicamento_Movimentacao { get; set; }
         public DbSet<Medicamento_Movimentacao_Item> Medicamento_Movimentacao_Item { get; set; }
+        public DbSet<Estabelecimento> Estabelecimento { get; set; }
+        public DbSet<Estabelecimento_Responsavel_Legal> Estabelecimento_Responsavel_Legal { get; set; }
 
         // Outras tabelas conforme seus modelos
 
@@ -67,6 +69,28 @@ namespace sistema_saude.Data
                 .WithMany(m => m.Medicamento_Movimentacao_Item)
                 .HasForeignKey(m => m.Id_Medicamento) // Chave estrangeira em Medicamento_Movimentacao_Item
                 .HasPrincipalKey(m => m.Codigo_Barras); // Chave primária em Medicamento
+
+            // Configuração do relacionamento de Estabelecimento com Bairro
+            modelBuilder
+            .Entity<Estabelecimento>()
+            .HasOne(e => e.Bairro) // Defina a propriedade de navegação correta
+            .WithMany(b => b.Estabelecimento) // Relacionamento inverso, se aplicável
+            .HasForeignKey(e => e.id_bairro) // Especifica a chave estrangeira correta
+            .OnDelete(DeleteBehavior.Restrict); // Ajuste o comportamento de deleção se necessário
+
+            //configurar relação entre estabelecimento_responsavel_legal e usuario
+            modelBuilder.Entity<Estabelecimento_Responsavel_Legal>()
+                .HasOne(e => e.Usuario)
+                .WithMany(u => u.Estabelecimento_Responsavel_Legal)
+                .HasForeignKey(e => e.Id_Usuario);
+
+
+            modelBuilder.Entity<Estabelecimento>()
+            .HasMany(e => e.Estabelecimento_Responsavel_Legal_List)
+            .WithOne(rl => rl.Estabelecimento)
+            .HasForeignKey(rl => rl.Id_Estabelecimento) // Nome da coluna da chave estrangeira
+            .HasConstraintName("FK_Estabelecimento_Responsavel_Legal_Estabelecimento");
+
         }
     }
 }
