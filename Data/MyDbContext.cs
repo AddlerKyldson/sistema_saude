@@ -19,6 +19,7 @@ namespace sistema_saude.Data
         public DbSet<Medicamento_Movimentacao_Item> Medicamento_Movimentacao_Item { get; set; }
         public DbSet<Estabelecimento> Estabelecimento { get; set; }
         public DbSet<Estabelecimento_Responsavel_Legal> Estabelecimento_Responsavel_Legal { get; set; }
+        public DbSet<Serie> Serie { get; set; }
 
         // Outras tabelas conforme seus modelos
 
@@ -90,6 +91,10 @@ namespace sistema_saude.Data
             .WithOne(rl => rl.Estabelecimento)
             .HasForeignKey(rl => rl.Id_Estabelecimento) // Nome da coluna da chave estrangeira
             .HasConstraintName("FK_Estabelecimento_Responsavel_Legal_Estabelecimento");
+
+
+            // Configuração do relacionamento de Serie com Estabelecimento
+            
 
         }
     }
