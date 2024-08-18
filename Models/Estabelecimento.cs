@@ -3,6 +3,7 @@ namespace sistema_saude.Models
     public class Estabelecimento
     {
         public int id { get; set; }
+        public int id_tipo_estabelecimento { get; set; }
         public string razao_social { get; set; }
         public string nome_fantasia { get; set; }
         public string cnpj { get; set; }
@@ -30,7 +31,8 @@ namespace sistema_saude.Models
         public DateTime? data_alteracao { get; set; }
         public string slug { get; set; }
 
-         public virtual List<Estabelecimento_Responsavel_Legal> Estabelecimento_Responsavel_Legal_List { get; set; }
+        public virtual List<Estabelecimento_Responsavel_Legal>?  Estabelecimento_Responsavel_Legal_List { get; set; } = null;
+        public virtual Tipo_Estabelecimento Tipo_Estabelecimento { get; set; }
 
         public virtual Bairro Bairro { get; set; }
     }

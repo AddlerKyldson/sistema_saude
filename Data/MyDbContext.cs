@@ -20,6 +20,8 @@ namespace sistema_saude.Data
         public DbSet<Estabelecimento> Estabelecimento { get; set; }
         public DbSet<Estabelecimento_Responsavel_Legal> Estabelecimento_Responsavel_Legal { get; set; }
         public DbSet<Serie> Serie { get; set; }
+        public DbSet<Tipo_Estabelecimento> Tipo_Estabelecimento { get; set; }
+
 
         // Outras tabelas conforme seus modelos
 
@@ -92,9 +94,20 @@ namespace sistema_saude.Data
             .HasForeignKey(rl => rl.Id_Estabelecimento) // Nome da coluna da chave estrangeira
             .HasConstraintName("FK_Estabelecimento_Responsavel_Legal_Estabelecimento");
 
+            // Configuração do relacionamento de Série com TipoEstabelecimento
+            modelBuilder
+                .Entity<Serie>()
+                .HasMany(s => s.Tipo_Estabelecimento) // Série tem muitos Tipos de Estabelecimento
+                .WithOne(t => t.Serie) // Tipo de Estabelecimento tem uma Série
+                .HasForeignKey(t => t.Id_Serie); // Chave estrangeira em TipoEstabelecimento
 
-            // Configuração do relacionamento de Serie com Estabelecimento
-            
+            // Configuração do relacionamento de TipoEstabelecimento com Estabelecimento    
+            modelBuilder
+                .Entity<Tipo_Estabelecimento>()
+                .HasMany(te => te.Estabelecimento) // Tipo de Estabelecimento tem muitos Estabelecimentos
+                .WithOne(e => e.Tipo_Estabelecimento) // Estabelecimento tem um Tipo de Estabelecimento
+                .HasForeignKey(e => e.id_tipo_estabelecimento); // Chave estrangeira em Estabelecimento
+
 
         }
     }

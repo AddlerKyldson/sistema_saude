@@ -3,6 +3,7 @@ namespace sistema_saude.Models
     public class EstabelecimentoDto
     {
         public int id { get; set; }
+        public int id_tipo_estabelecimento { get; set; }
         public string razao_social { get; set; }
         public string nome_fantasia { get; set; }
         public string cnpj { get; set; }
@@ -30,7 +31,7 @@ namespace sistema_saude.Models
         public DateTimeOffset data_cadastro { get; set; }
         public string slug { get; set; }
 
-        public List<Estabelecimento_Responsavel_LegalDto> Estabelecimento_Responsavel_Legal { get; set; } // Aqui é uma List<T>
-        
+        public List<Estabelecimento_Responsavel_LegalDto>? Estabelecimento_Responsavel_Legal { get; set; } = null; // Inicializado como null
+
     }
 }

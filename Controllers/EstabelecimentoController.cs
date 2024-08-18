@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using sistema_saude.Data;
 using sistema_saude.Models;
+using Microsoft.Extensions.Logging;
 
 namespace sistema_saude.Controllers
 {
@@ -10,10 +11,12 @@ namespace sistema_saude.Controllers
     [ApiController]
     public class EstabelecimentoController : ControllerBase
     {
+        private readonly ILogger<EstabelecimentoController> _logger;
         private readonly MyDbContext _context;
 
-        public EstabelecimentoController(MyDbContext context)
+        public EstabelecimentoController(ILogger<EstabelecimentoController> logger,MyDbContext context)
         {
+            _logger = logger;
             _context = context;
         }
 
@@ -71,6 +74,7 @@ namespace sistema_saude.Controllers
             var EstabelecimentoDto = new EstabelecimentoDto
             {
                 id = Estabelecimento.id,
+                id_tipo_estabelecimento = Estabelecimento.id_tipo_estabelecimento,
                 razao_social = Estabelecimento.razao_social,
                 nome_fantasia = Estabelecimento.nome_fantasia,
                 cnpj = Estabelecimento.cnpj,
@@ -106,12 +110,27 @@ namespace sistema_saude.Controllers
         public async Task<ActionResult<Estabelecimento>> PostEstabelecimento([FromBody] EstabelecimentoDto EstabelecimentoDto)
         {
 
+            _logger.LogInformation("Recebendo solicitação de criação de Estabelecimento.");
+
+    if (EstabelecimentoDto.Estabelecimento_Responsavel_Legal == null)
+    {
+        _logger.LogInformation("Estabelecimento_Responsavel_Legal é nulo.");
+        ModelState.Remove("Estabelecimento_Responsavel_Legal");
+    }
+
+    if (!ModelState.IsValid)
+    {
+        _logger.LogWarning("ModelState inválido.");
+        return BadRequest(ModelState);
+    }
+
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
                 {
                     var Estabelecimento = new Estabelecimento
                     {
+                        id_tipo_estabelecimento = EstabelecimentoDto.id_tipo_estabelecimento,
                         razao_social = EstabelecimentoDto.razao_social,
                         nome_fantasia = EstabelecimentoDto.nome_fantasia,
                         cnpj = EstabelecimentoDto.cnpj,
@@ -144,20 +163,24 @@ namespace sistema_saude.Controllers
                     Console.WriteLine("Vai listar agora.");
                     Console.WriteLine(EstabelecimentoDto.Estabelecimento_Responsavel_Legal);
 
-                    foreach (var itemDto in EstabelecimentoDto.Estabelecimento_Responsavel_Legal)
+                    //verificar se o tamanho da lista é maior que 0
+                    if (EstabelecimentoDto.Estabelecimento_Responsavel_Legal?.Count > 0)
                     {
-
-                        Console.WriteLine("listando responsáveis.");
-
-                        int id_usuario = await UsuarioService.VerificarUsuarioPorCPFAsync(itemDto, _context);
-
-                        var item = new Estabelecimento_Responsavel_Legal
+                        foreach (var itemDto in EstabelecimentoDto.Estabelecimento_Responsavel_Legal)
                         {
-                            Id_Estabelecimento = Estabelecimento.id,
-                            Id_Usuario = id_usuario,
-                            Data_Cadastro = DateTime.UtcNow
-                        };
-                        _context.Estabelecimento_Responsavel_Legal.Add(item);
+
+                            Console.WriteLine("listando responsáveis.");
+
+                            int id_usuario = await UsuarioService.VerificarUsuarioPorCPFAsync(itemDto, _context);
+
+                            var item = new Estabelecimento_Responsavel_Legal
+                            {
+                                Id_Estabelecimento = Estabelecimento.id,
+                                Id_Usuario = id_usuario,
+                                Data_Cadastro = DateTime.UtcNow
+                            };
+                            _context.Estabelecimento_Responsavel_Legal.Add(item);
+                        }
                     }
 
                     await _context.SaveChangesAsync();
@@ -185,6 +208,7 @@ namespace sistema_saude.Controllers
                 return NotFound();
             }
 
+            Estabelecimento.id_tipo_estabelecimento = EstabelecimentoDto.id_tipo_estabelecimento;
             Estabelecimento.razao_social = EstabelecimentoDto.razao_social;
             Estabelecimento.nome_fantasia = EstabelecimentoDto.nome_fantasia;
             Estabelecimento.cnpj = EstabelecimentoDto.cnpj;
