@@ -20,9 +20,62 @@ namespace sistema_saude.Controllers
 
         // GET: api/Usuarios
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuario()
+        public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuario([FromQuery] string? filtro_busca = null, [FromQuery] int? tipo = null, [FromQuery] int? page = null, [FromQuery] int? perPage = null)
         {
-            return await _context.Usuario.ToListAsync();
+            // Consulta básica de usuários
+            var query = _context.Usuario.AsQueryable();
+
+            // Filtragem por busca, se aplicável
+            if (!string.IsNullOrEmpty(filtro_busca))
+            {
+                query = query.Where(u => u.Nome.Contains(filtro_busca) || u.Email.Contains(filtro_busca) || u.CPF.Contains(filtro_busca) || u.CNS.Contains(filtro_busca));
+            }
+
+            // Filtragem por tipo, se aplicável
+            if (tipo != null)
+            {
+                query = query.Where(u => u.Tipo == tipo);
+            }
+
+            if (page != null && perPage != null)
+            {
+                // Verifica se a página e perPage são válidos
+                if (page < 1)
+                {
+                    return BadRequest("Page must be greater than or equal to 1.");
+                }
+                if (perPage <= 0)
+                {
+                    return BadRequest("PerPage must be greater than 0.");
+                }
+
+                // Obtém o total de itens filtrados antes da paginação
+                var total = await query.CountAsync();
+
+                // Aplica a paginação
+                var usuariosFiltrados = await query
+                    .OrderBy(u => u.Nome) // Adicione uma ordenação padrão ou baseada em parâmetros
+                    .Skip((page.Value - 1) * perPage.Value)
+                    .Take(perPage.Value)
+                    .ToListAsync();
+
+                // Retorna os dados paginados e o total de itens
+                return Ok(new
+                {
+                    total,
+                    dados = usuariosFiltrados
+                });
+            }
+            else
+            {
+                // Se page ou perPage forem nulos, lista todos os usuários
+                var todosUsuarios = await query.ToListAsync();
+                return Ok(new
+                {
+                    total = todosUsuarios.Count,
+                    dados = todosUsuarios
+                });
+            }
         }
 
         [HttpGet("{id}")]

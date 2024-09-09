@@ -220,6 +220,7 @@ namespace sistema_saude.Controllers
             medicamento.Estoque = medicamentoDto.Estoque;
             medicamento.Data_Alteracao = DateTime.UtcNow;
             medicamento.Slug = medicamentoDto.Slug;
+            medicamento.Id_Usuario_Alteracao = medicamentoDto.Id_Usuario_Alteracao;
 
             await _context.SaveChangesAsync();
 

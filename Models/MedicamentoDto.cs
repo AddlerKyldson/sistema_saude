@@ -5,6 +5,7 @@ public class MedicamentoDto
     public string Codigo_Barras { get; set; }
     public int Estoque { get; set; }
     public int Id_Usuario_Cadastro { get; set; }
+    public int? Id_Usuario_Alteracao { get; set; }
     public DateTimeOffset Data_Cadastro { get; set; }
     public string Slug { get; set; }
 }

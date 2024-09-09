@@ -21,6 +21,7 @@ namespace sistema_saude.Data
         public DbSet<Estabelecimento_Responsavel_Legal> Estabelecimento_Responsavel_Legal { get; set; }
         public DbSet<Serie> Serie { get; set; }
         public DbSet<Tipo_Estabelecimento> Tipo_Estabelecimento { get; set; }
+        public DbSet<Inspecao> Inspecao { get; set; }
 
 
         // Outras tabelas conforme seus modelos
@@ -108,7 +109,26 @@ namespace sistema_saude.Data
                 .WithOne(e => e.Tipo_Estabelecimento) // Estabelecimento tem um Tipo de Estabelecimento
                 .HasForeignKey(e => e.id_tipo_estabelecimento); // Chave estrangeira em Estabelecimento
 
+            // Configuração do relacionamento de Inspecao com Estabelecimento
+            modelBuilder
+                .Entity<Inspecao>()
+                .HasOne(i => i.Estabelecimento) // Inspecao tem um Estabelecimento
+                .WithMany(e => e.Inspecao) // Estabelecimento tem muitas Inspeções
+                .HasForeignKey(i => i.Id_estabelecimento); // Chave estrangeira em Inspecao
 
+            // Configuração do relacionamento de Inspecao com Usuario
+            modelBuilder
+                .Entity<Inspecao>()
+                .HasOne(i => i.Usuario) // Inspecao tem um Usuario
+                .WithMany(u => u.Inspecao) // Usuario tem muitas Inspeções
+                .HasForeignKey(i => i.Id_Usuario_Cadastro); // Chave estrangeira em Inspecao
+
+            // Configuração do relacionamento de Inspecao Responsavel Tecnico com Usuario
+            modelBuilder
+                .Entity<Inspecao>()
+                .HasOne(i => i.Usuario) // Inspecao tem um Usuario
+                .WithMany(u => u.Inspecao) // Usuario tem muitas Inspeções
+                .HasForeignKey(i => i.Id_responsavel_tecnico); // Chave estrangeira em Inspecao
         }
     }
 }

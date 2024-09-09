@@ -25,6 +25,7 @@ namespace sistema_saude.Models
         public string Slug { get; set; }
 
         public ICollection<Estabelecimento_Responsavel_Legal> Estabelecimento_Responsavel_Legal { get; set; }
+        public ICollection<Inspecao> Inspecao { get; set; }
 
         /* public virtual Bairro BairroNavigation { get; set; }
         public virtual Usuario Id_Usuario_CadastroNavigation { get; set; }

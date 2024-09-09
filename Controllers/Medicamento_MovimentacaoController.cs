@@ -146,8 +146,7 @@ namespace sistema_saude.Controllers
             medicamento_movimentacao.Descricao = medicamento_movimentacaoDto.Descricao;
             medicamento_movimentacao.Data = medicamento_movimentacaoDto.Data;
             medicamento_movimentacao.Tipo = medicamento_movimentacaoDto.Tipo;
-            medicamento_movimentacao.Id_Usuario_Cadastro =
-                medicamento_movimentacaoDto.Id_Usuario_Cadastro;
+            medicamento_movimentacao.Id_Usuario_Alteracao = medicamento_movimentacaoDto.Id_Usuario_Alteracao;
 
             await _context.SaveChangesAsync();
 

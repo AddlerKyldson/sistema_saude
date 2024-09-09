@@ -14,7 +14,7 @@ namespace sistema_saude.Controllers
         private readonly ILogger<EstabelecimentoController> _logger;
         private readonly MyDbContext _context;
 
-        public EstabelecimentoController(ILogger<EstabelecimentoController> logger,MyDbContext context)
+        public EstabelecimentoController(ILogger<EstabelecimentoController> logger, MyDbContext context)
         {
             _logger = logger;
             _context = context;
@@ -22,39 +22,56 @@ namespace sistema_saude.Controllers
 
         // GET: api/Estabelecimentos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Estabelecimento>>> GetEstabelecimento([FromQuery] string? filtro_busca = null, [FromQuery] int page = 1, [FromQuery] int perPage = 20)
+        public async Task<ActionResult<IEnumerable<Estabelecimento>>> GetEstabelecimento([FromQuery] string? filtro_busca = null, [FromQuery] int? page = null, [FromQuery] int? perPage = null)
         {
-            // Verifica se a página é válida
-            if (page < 1)
-            {
-                return BadRequest("Page must be greater than or equal to 1.");
-            }
-
-            // Consulta básica de medicamentos
+            // Consulta básica de estabelecimentos
             var query = _context.Estabelecimento.AsQueryable();
 
             // Filtragem por busca, se aplicável
             if (!string.IsNullOrEmpty(filtro_busca))
             {
-                query = query.Where(m => m.razao_social.Contains(filtro_busca) || m.nome_fantasia.Contains(filtro_busca) || m.cnpj.Contains(filtro_busca));
+                query = query.Where(e => e.razao_social.Contains(filtro_busca) || e.nome_fantasia.Contains(filtro_busca) || e.cnpj.Contains(filtro_busca));
             }
 
-            // Obtém o total de itens filtrados
-            var total = await query.CountAsync();
-
-            // Paginação
-            var estabelecimentosFiltrados = await query
-                .Skip((page - 1) * perPage)
-                .Take(perPage)
-                .ToListAsync();
-
-            // Retorna os dados e o total de itens
-            return Ok(new
+            if (page != null && perPage != null)
             {
-                total,
-                dados = estabelecimentosFiltrados
-            });
+                // Verifica se a página e perPage são válidos
+                if (page < 1)
+                {
+                    return BadRequest("Page must be greater than or equal to 1.");
+                }
+                if (perPage <= 0)
+                {
+                    return BadRequest("PerPage must be greater than 0.");
+                }
 
+                // Obtém o total de itens filtrados antes da paginação
+                var total = await query.CountAsync();
+
+                // Aplica a paginação
+                var estabelecimentosFiltrados = await query
+                    .OrderBy(e => e.razao_social) // Adicionando uma ordenação por razão social
+                    .Skip((page.Value - 1) * perPage.Value)
+                    .Take(perPage.Value)
+                    .ToListAsync();
+
+                // Retorna os dados paginados e o total de itens
+                return Ok(new
+                {
+                    total,
+                    dados = estabelecimentosFiltrados
+                });
+            }
+            else
+            {
+                // Se page ou perPage forem nulos, lista todos os estabelecimentos
+                var todosEstabelecimentos = await query.ToListAsync();
+                return Ok(new
+                {
+                    total = todosEstabelecimentos.Count,
+                    dados = todosEstabelecimentos
+                });
+            }
         }
 
         [HttpGet("{id}")]
@@ -112,17 +129,17 @@ namespace sistema_saude.Controllers
 
             _logger.LogInformation("Recebendo solicitação de criação de Estabelecimento.");
 
-    if (EstabelecimentoDto.Estabelecimento_Responsavel_Legal == null)
-    {
-        _logger.LogInformation("Estabelecimento_Responsavel_Legal é nulo.");
-        ModelState.Remove("Estabelecimento_Responsavel_Legal");
-    }
+            if (EstabelecimentoDto.Estabelecimento_Responsavel_Legal == null)
+            {
+                _logger.LogInformation("Estabelecimento_Responsavel_Legal é nulo.");
+                ModelState.Remove("Estabelecimento_Responsavel_Legal");
+            }
 
-    if (!ModelState.IsValid)
-    {
-        _logger.LogWarning("ModelState inválido.");
-        return BadRequest(ModelState);
-    }
+            if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("ModelState inválido.");
+                return BadRequest(ModelState);
+            }
 
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
