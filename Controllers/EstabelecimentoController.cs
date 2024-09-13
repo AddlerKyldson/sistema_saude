@@ -123,6 +123,54 @@ namespace sistema_saude.Controllers
             return EstabelecimentoDto;
         }
 
+        [HttpGet("{id}/responsaveis-legais")]
+        public async Task<ActionResult<List<Estabelecimento_Responsavel_LegalDto>>> GetResponsaveisLegais(int id)
+        {
+            var responsaveisLegais = await _context.Estabelecimento_Responsavel_Legal
+                .Where(r => r.Id_Estabelecimento == id)
+                .Select(r => new Estabelecimento_Responsavel_LegalDto
+                {
+                    nome_responsavel = r.Usuario.Nome,
+                    CPF = r.Usuario.CPF,
+                    escolaridade = r.Usuario.Escolaridade,
+                    Email = r.Usuario.Email
+                })
+                .ToListAsync();
+
+            if (responsaveisLegais == null || responsaveisLegais.Count == 0)
+            {
+                return NotFound("Nenhum responsável legal encontrado para este estabelecimento.");
+            }
+
+            return Ok(responsaveisLegais);
+        }
+
+        [HttpGet("{id}/responsaveis-tecnicos")]
+        public async Task<ActionResult<List<Estabelecimento_Responsavel_TecnicoDto>>> GetResponsaveisTecnicos(int id)
+        {
+            var responsaveisTecnicos = await _context.Estabelecimento_Responsavel_Tecnico
+                .Where(r => r.Id_Estabelecimento == id)
+                .Select(r => new Estabelecimento_Responsavel_TecnicoDto
+                {
+                    nome_responsavel = r.Usuario.Nome,
+                    CPF = r.Usuario.CPF,
+                    escolaridade = r.Usuario.Escolaridade,
+                    formacao = r.Usuario.Formacao,
+                    especializacao = r.Usuario.Especializacao,
+                    registro_conselho = r.Usuario.Registro_Conselho,
+                    Email = r.Usuario.Email
+                })
+                .ToListAsync();
+
+            if (responsaveisTecnicos == null || responsaveisTecnicos.Count == 0)
+            {
+                return NotFound("Nenhum responsável técnico encontrado para este estabelecimento.");
+            }
+
+            return Ok(responsaveisTecnicos);
+        }
+
+
         [HttpPost]
         public async Task<ActionResult<Estabelecimento>> PostEstabelecimento([FromBody] EstabelecimentoDto EstabelecimentoDto)
         {
@@ -133,6 +181,12 @@ namespace sistema_saude.Controllers
             {
                 _logger.LogInformation("Estabelecimento_Responsavel_Legal é nulo.");
                 ModelState.Remove("Estabelecimento_Responsavel_Legal");
+            }
+
+            if (EstabelecimentoDto.Estabelecimento_Responsavel_Tecnico == null)
+            {
+                _logger.LogInformation("Estabelecimento_Responsavel_Tecnico é nulo.");
+                ModelState.Remove("Estabelecimento_Responsavel_Tecnico");
             }
 
             if (!ModelState.IsValid)
@@ -179,26 +233,72 @@ namespace sistema_saude.Controllers
 
                     Console.WriteLine("Vai listar agora.");
                     Console.WriteLine(EstabelecimentoDto.Estabelecimento_Responsavel_Legal);
+                    Console.WriteLine(EstabelecimentoDto.Estabelecimento_Responsavel_Tecnico);
+
+
+
+                    _logger.LogInformation("Processando responsáveis técnicos.");
+
+                    if (EstabelecimentoDto.Estabelecimento_Responsavel_Tecnico?.Count > 0)
+                    {
+                        foreach (var itemDto in EstabelecimentoDto.Estabelecimento_Responsavel_Tecnico)
+                        {
+                            try
+                            {
+                                int id_usuario = await UsuarioService.VerificarResponsavelTecnicoPorCPFAsync(itemDto, _context);
+                                _logger.LogInformation($"Responsável técnico processado: {id_usuario}");
+
+                                var item = new Estabelecimento_Responsavel_Tecnico
+                                {
+                                    Id_Estabelecimento = Estabelecimento.id,
+                                    Id_Usuario = id_usuario,
+                                    Data_Cadastro = DateTime.UtcNow
+                                };
+                                _context.Estabelecimento_Responsavel_Tecnico.Add(item);
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError($"Erro ao processar responsável técnico: {ex.Message}");
+                                throw;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogInformation("Nenhum responsável técnico encontrado.");
+                    }
 
                     //verificar se o tamanho da lista é maior que 0
                     if (EstabelecimentoDto.Estabelecimento_Responsavel_Legal?.Count > 0)
                     {
+                        _logger.LogInformation("Processando responsáveis legais.");
                         foreach (var itemDto in EstabelecimentoDto.Estabelecimento_Responsavel_Legal)
                         {
-
-                            Console.WriteLine("listando responsáveis.");
-
-                            int id_usuario = await UsuarioService.VerificarUsuarioPorCPFAsync(itemDto, _context);
-
-                            var item = new Estabelecimento_Responsavel_Legal
+                            try
                             {
-                                Id_Estabelecimento = Estabelecimento.id,
-                                Id_Usuario = id_usuario,
-                                Data_Cadastro = DateTime.UtcNow
-                            };
-                            _context.Estabelecimento_Responsavel_Legal.Add(item);
+                                int id_usuario = await UsuarioService.VerificarResponsavelLegalPorCPFAsync(itemDto, _context);
+                                _logger.LogInformation($"Responsável legal processado: {id_usuario}");
+
+                                var item = new Estabelecimento_Responsavel_Legal
+                                {
+                                    Id_Estabelecimento = Estabelecimento.id,
+                                    Id_Usuario = id_usuario,
+                                    Data_Cadastro = DateTime.UtcNow
+                                };
+                                _context.Estabelecimento_Responsavel_Legal.Add(item);
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError($"Erro ao processar responsável legal: {ex.Message}");
+                                throw;
+                            }
                         }
                     }
+                    else
+                    {
+                        _logger.LogInformation("Nenhum responsável legal encontrado.");
+                    }
+
 
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();

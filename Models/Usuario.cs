@@ -21,15 +21,19 @@ namespace sistema_saude.Models
         public DateTime? Data_Alteracao { get; set; } // Pode ser NULL
         public string Permissoes { get; set; }
         public int? Escolaridade { get; set; }
+        public string? Formacao { get; set; }
+        public string? Especializacao { get; set; }
+        public string? Registro_Conselho { get; set; }
         public int Tipo { get; set; }
         public string Slug { get; set; }
 
         public ICollection<Estabelecimento_Responsavel_Legal> Estabelecimento_Responsavel_Legal { get; set; }
+        public ICollection<Estabelecimento_Responsavel_Tecnico> Estabelecimento_Responsavel_Tecnico { get; set; }
         public ICollection<Inspecao> Inspecao { get; set; }
 
         /* public virtual Bairro BairroNavigation { get; set; }
         public virtual Usuario Id_Usuario_CadastroNavigation { get; set; }
         public virtual Usuario Id_Usuario_AlteracaoNavigation { get; set; } */
-        
+
     }
 }

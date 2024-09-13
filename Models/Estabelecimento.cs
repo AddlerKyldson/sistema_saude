@@ -32,6 +32,7 @@ namespace sistema_saude.Models
         public string slug { get; set; }
 
         public virtual List<Estabelecimento_Responsavel_Legal>?  Estabelecimento_Responsavel_Legal_List { get; set; } = null;
+        public virtual List<Estabelecimento_Responsavel_Tecnico>? Estabelecimento_Responsavel_Tecnico_List { get; set; } = null;
         public virtual Tipo_Estabelecimento Tipo_Estabelecimento { get; set; }        
         public virtual Bairro Bairro { get; set; }
         public ICollection<Inspecao> Inspecao { get; set; }

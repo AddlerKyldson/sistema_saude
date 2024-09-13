@@ -19,6 +19,7 @@ namespace sistema_saude.Data
         public DbSet<Medicamento_Movimentacao_Item> Medicamento_Movimentacao_Item { get; set; }
         public DbSet<Estabelecimento> Estabelecimento { get; set; }
         public DbSet<Estabelecimento_Responsavel_Legal> Estabelecimento_Responsavel_Legal { get; set; }
+        public DbSet<Estabelecimento_Responsavel_Tecnico> Estabelecimento_Responsavel_Tecnico { get; set; }
         public DbSet<Serie> Serie { get; set; }
         public DbSet<Tipo_Estabelecimento> Tipo_Estabelecimento { get; set; }
         public DbSet<Inspecao> Inspecao { get; set; }
@@ -88,12 +89,24 @@ namespace sistema_saude.Data
                 .WithMany(u => u.Estabelecimento_Responsavel_Legal)
                 .HasForeignKey(e => e.Id_Usuario);
 
+            //configurar relação entre estabelecimento_responsavel_tecnico e usuario
+            modelBuilder.Entity<Estabelecimento_Responsavel_Tecnico>()
+                .HasOne(e => e.Usuario)
+                .WithMany(u => u.Estabelecimento_Responsavel_Tecnico)
+                .HasForeignKey(e => e.Id_Usuario);
+
 
             modelBuilder.Entity<Estabelecimento>()
             .HasMany(e => e.Estabelecimento_Responsavel_Legal_List)
             .WithOne(rl => rl.Estabelecimento)
             .HasForeignKey(rl => rl.Id_Estabelecimento) // Nome da coluna da chave estrangeira
             .HasConstraintName("FK_Estabelecimento_Responsavel_Legal_Estabelecimento");
+
+            modelBuilder.Entity<Estabelecimento>()
+            .HasMany(e => e.Estabelecimento_Responsavel_Tecnico_List)
+            .WithOne(rt => rt.Estabelecimento)
+            .HasForeignKey(rt => rt.Id_Estabelecimento) // Nome da coluna da chave estrangeira
+            .HasConstraintName("FK_Estabelecimento_Responsavel_Tecnico_Estabelecimento");
 
             // Configuração do relacionamento de Série com TipoEstabelecimento
             modelBuilder

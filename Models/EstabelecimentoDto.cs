@@ -32,6 +32,7 @@ namespace sistema_saude.Models
         public string slug { get; set; }
 
         public List<Estabelecimento_Responsavel_LegalDto>? Estabelecimento_Responsavel_Legal { get; set; } = null; // Inicializado como null
+        public List<Estabelecimento_Responsavel_TecnicoDto>? Estabelecimento_Responsavel_Tecnico { get; set; } = null; // Inicializado como null
 
     }
 }
