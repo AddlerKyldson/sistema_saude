@@ -128,8 +128,10 @@ namespace sistema_saude.Controllers
         {
             var responsaveisLegais = await _context.Estabelecimento_Responsavel_Legal
                 .Where(r => r.Id_Estabelecimento == id)
+                .Where(r => r.Status == 1)
                 .Select(r => new Estabelecimento_Responsavel_LegalDto
                 {
+                    Id = r.Id,
                     nome_responsavel = r.Usuario.Nome,
                     CPF = r.Usuario.CPF,
                     escolaridade = r.Usuario.Escolaridade,
@@ -150,8 +152,10 @@ namespace sistema_saude.Controllers
         {
             var responsaveisTecnicos = await _context.Estabelecimento_Responsavel_Tecnico
                 .Where(r => r.Id_Estabelecimento == id)
+                .Where(r => r.Status == 1)
                 .Select(r => new Estabelecimento_Responsavel_TecnicoDto
                 {
+                    Id = r.Id,
                     nome_responsavel = r.Usuario.Nome,
                     CPF = r.Usuario.CPF,
                     escolaridade = r.Usuario.Escolaridade,
@@ -315,6 +319,132 @@ namespace sistema_saude.Controllers
 
         }
 
+        [HttpPost("responsavelLegal")]
+        public async Task<ActionResult> PostResponsavelLegal([FromBody] Estabelecimento_Responsavel_LegalDto responsavelLegalDto)
+        {
+            _logger.LogInformation("Recebendo solicitação para adicionar um responsável legal.");
+
+            if (responsavelLegalDto == null)
+            {
+                _logger.LogWarning("Responsável legal não fornecido.");
+                return BadRequest("Os dados do responsável legal não podem estar vazios.");
+            }
+
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Obtém o ID do estabelecimento do DTO
+                    var estabelecimentoId = responsavelLegalDto.Id_Estabelecimento;
+
+                    // Verifica se o estabelecimento existe
+                    var estabelecimento = await _context.Estabelecimento.FindAsync(estabelecimentoId);
+                    if (estabelecimento == null)
+                    {
+                        _logger.LogWarning($"Estabelecimento com ID {estabelecimentoId} não encontrado.");
+                        return NotFound($"Estabelecimento com ID {estabelecimentoId} não encontrado.");
+                    }
+
+                    try
+                    {
+                        // Verifica e obtém o ID do usuário responsável legal
+                        int id_usuario = await UsuarioService.VerificarResponsavelLegalPorCPFAsync(responsavelLegalDto, _context);
+                        _logger.LogInformation($"Responsável legal processado: {id_usuario}");
+
+                        var item = new Estabelecimento_Responsavel_Legal
+                        {
+                            Id_Estabelecimento = estabelecimentoId,
+                            Id_Usuario = id_usuario,
+                            Data_Cadastro = DateTime.UtcNow,
+                            Status = 1
+                        };
+
+                        // Adiciona o responsável legal ao contexto
+                        _context.Estabelecimento_Responsavel_Legal.Add(item);
+
+                        await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+
+                        return Ok("Responsável legal adicionado com sucesso.");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"Erro ao processar responsável legal: {ex.Message}");
+                        throw;
+                    }
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError($"Erro ao adicionar responsável legal: {e.Message}");
+                    return BadRequest(e.Message);
+                }
+            }
+        }
+
+        [HttpPost("responsavelTecnico")]
+        public async Task<ActionResult> PostResponsavelTecnico([FromBody] Estabelecimento_Responsavel_TecnicoDto responsavelTecnicoDto)
+        {
+            _logger.LogInformation("Recebendo solicitação para adicionar um responsável legal.");
+
+            if (responsavelTecnicoDto == null)
+            {
+                _logger.LogWarning("Responsável legal não fornecido.");
+                return BadRequest("Os dados do responsável legal não podem estar vazios.");
+            }
+
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Obtém o ID do estabelecimento do DTO
+                    var estabelecimentoId = responsavelTecnicoDto.Id_Estabelecimento;
+
+                    // Verifica se o estabelecimento existe
+                    var estabelecimento = await _context.Estabelecimento.FindAsync(estabelecimentoId);
+                    if (estabelecimento == null)
+                    {
+                        _logger.LogWarning($"Estabelecimento com ID {estabelecimentoId} não encontrado.");
+                        return NotFound($"Estabelecimento com ID {estabelecimentoId} não encontrado.");
+                    }
+
+                    try
+                    {
+                        // Verifica e obtém o ID do usuário responsável legal
+                        int id_usuario = await UsuarioService.VerificarResponsavelTecnicoPorCPFAsync(responsavelTecnicoDto, _context);
+                        _logger.LogInformation($"Responsável legal processado: {id_usuario}");
+
+                        var item = new Estabelecimento_Responsavel_Tecnico
+                        {
+                            Id_Estabelecimento = estabelecimentoId,
+                            Id_Usuario = id_usuario,
+                            Data_Cadastro = DateTime.UtcNow,
+                            Status = 1
+                        };
+
+                        // Adiciona o responsável legal ao contexto
+                        _context.Estabelecimento_Responsavel_Tecnico.Add(item);
+
+                        await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+
+                        return Ok("Responsável legal adicionado com sucesso.");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"Erro ao processar responsável legal: {ex.Message}");
+                        throw;
+                    }
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError($"Erro ao adicionar responsável legal: {e.Message}");
+                    return BadRequest(e.Message);
+                }
+            }
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEstabelecimento(int id, [FromBody] EstabelecimentoDto EstabelecimentoDto)
         {
@@ -370,5 +500,94 @@ namespace sistema_saude.Controllers
 
             return NoContent(); // Retorna uma resposta 204 No Content para indicar sucesso sem conteúdo de retorno
         }
+
+        [HttpDelete("responsavelLegal/{idEstabelecimento}/{idResponsavelLegal}")]
+        public async Task<ActionResult> DeleteResponsavelLegal(int idEstabelecimento, int idResponsavelLegal)
+        {
+            _logger.LogInformation("Recebendo solicitação para alterar o status do responsável legal para 0.");
+
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Verifica se o estabelecimento existe
+                    var estabelecimento = await _context.Estabelecimento.FindAsync(idEstabelecimento);
+                    if (estabelecimento == null)
+                    {
+                        _logger.LogWarning($"Estabelecimento com ID {idEstabelecimento} não encontrado.");
+                        return NotFound($"Estabelecimento com ID {idEstabelecimento} não encontrado.");
+                    }
+
+                    // Verifica se o responsável legal existe
+                    var responsavelLegal = await _context.Estabelecimento_Responsavel_Legal
+                        .FirstOrDefaultAsync(rl => rl.Id_Estabelecimento == idEstabelecimento && rl.Id == idResponsavelLegal);
+                    if (responsavelLegal == null)
+                    {
+                        _logger.LogWarning($"Responsável legal com ID {idResponsavelLegal} não encontrado para o estabelecimento {idEstabelecimento}.");
+                        return NotFound($"Responsável legal com ID {idResponsavelLegal} não encontrado.");
+                    }
+
+                    // Altera o status do responsável legal para 0
+                    responsavelLegal.Status = 0; // Certifique-se de que a propriedade 'Status' existe na entidade
+                    _context.Estabelecimento_Responsavel_Legal.Update(responsavelLegal);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    _logger.LogInformation($"Status do responsável legal com ID {idResponsavelLegal} alterado para 0.");
+                    return Ok("Status do responsável legal alterado com sucesso.");
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError($"Erro ao alterar status do responsável legal: {ex.Message}");
+                    return BadRequest($"Erro ao alterar status do responsável legal: {ex.Message}");
+                }
+            }
+        }
+
+        [HttpDelete("responsavelTecnico/{idEstabelecimento}/{idResponsavelTecnico}")]
+        public async Task<ActionResult> DeleteResponsavelTecnico(int idEstabelecimento, int idResponsavelTecnico)
+        {
+            _logger.LogInformation("Recebendo solicitação para alterar o status do responsável legal para 0.");
+
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Verifica se o estabelecimento existe
+                    var estabelecimento = await _context.Estabelecimento.FindAsync(idEstabelecimento);
+                    if (estabelecimento == null)
+                    {
+                        _logger.LogWarning($"Estabelecimento com ID {idEstabelecimento} não encontrado.");
+                        return NotFound($"Estabelecimento com ID {idEstabelecimento} não encontrado.");
+                    }
+
+                    // Verifica se o responsável legal existe
+                    var responsavelTecnico = await _context.Estabelecimento_Responsavel_Tecnico
+                        .FirstOrDefaultAsync(rl => rl.Id_Estabelecimento == idEstabelecimento && rl.Id == idResponsavelTecnico);
+                    if (responsavelTecnico == null)
+                    {
+                        _logger.LogWarning($"Responsável legal com ID {idResponsavelTecnico} não encontrado para o estabelecimento {idEstabelecimento}.");
+                        return NotFound($"Responsável legal com ID {idResponsavelTecnico} não encontrado.");
+                    }
+
+                    // Altera o status do responsável legal para 0
+                    responsavelTecnico.Status = 0; // Certifique-se de que a propriedade 'Status' existe na entidade
+                    _context.Estabelecimento_Responsavel_Tecnico.Update(responsavelTecnico);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    _logger.LogInformation($"Status do responsável legal com ID {idResponsavelTecnico} alterado para 0.");
+                    return Ok("Status do responsável legal alterado com sucesso.");
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError($"Erro ao alterar status do responsável legal: {ex.Message}");
+                    return BadRequest($"Erro ao alterar status do responsável legal: {ex.Message}");
+                }
+            }
+        }
+
     }
 }

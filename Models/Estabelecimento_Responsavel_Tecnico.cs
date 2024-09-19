@@ -4,6 +4,7 @@ namespace sistema_saude.Models
     {
         public int? Id { get; set; }
         public int Id_Estabelecimento { get; set; }
+        public int Status { get; set; }
         public int Id_Usuario { get; set; }
         public int Id_Usuario_Cadastro { get; set; }
         public int? Id_Usuario_Alteracao { get; set; }
