@@ -101,6 +101,7 @@ namespace sistema_saude.Controllers
                 inscricao_municipal = Estabelecimento.inscricao_municipal,
                 inscricao_estadual = Estabelecimento.inscricao_estadual,
                 logradouro = Estabelecimento.logradouro,
+                numero = Estabelecimento.numero,
                 id_bairro = Estabelecimento.id_bairro,
                 id_cidade = Estabelecimento.Bairro.Cidade.Id,
                 id_estado = Estabelecimento.Bairro.Cidade.Estado.Id,
@@ -215,6 +216,7 @@ namespace sistema_saude.Controllers
                         inscricao_municipal = EstabelecimentoDto.inscricao_municipal,
                         inscricao_estadual = EstabelecimentoDto.inscricao_estadual,
                         logradouro = EstabelecimentoDto.logradouro,
+                        numero = EstabelecimentoDto.numero,
                         id_bairro = EstabelecimentoDto.id_bairro,
                         cep = EstabelecimentoDto.cep,
                         complemento = EstabelecimentoDto.complemento,
@@ -465,6 +467,7 @@ namespace sistema_saude.Controllers
             Estabelecimento.inscricao_municipal = EstabelecimentoDto.inscricao_municipal;
             Estabelecimento.inscricao_estadual = EstabelecimentoDto.inscricao_estadual;
             Estabelecimento.logradouro = EstabelecimentoDto.logradouro;
+            Estabelecimento.numero = EstabelecimentoDto.numero;
             Estabelecimento.id_bairro = EstabelecimentoDto.id_bairro;
             Estabelecimento.cep = EstabelecimentoDto.cep;
             Estabelecimento.complemento = EstabelecimentoDto.complemento;

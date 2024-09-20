@@ -13,6 +13,7 @@ namespace sistema_saude.Models
         public string inscricao_municipal { get; set; }
         public string inscricao_estadual { get; set; }
         public string logradouro { get; set; }
+        public string numero { get; set; }
         public int id_bairro { get; set; }
         public int? id_cidade { get; set; }
         public int? id_estado { get; set; }
