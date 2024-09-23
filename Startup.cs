@@ -55,7 +55,7 @@ public class Startup
             options.AddPolicy(
                 "AllowSpecificOrigin",
                 builder =>
-                    builder.WithOrigins("http://localhost:3000", "http://89.116.212.101:3000", "http://192.168.0.9:3000").AllowAnyMethod().AllowAnyHeader()
+                    builder.WithOrigins("http://localhost:3000", "http://89.116.212.101:3000", "https://www.gerenciadorsaude.com.br").AllowAnyMethod().AllowAnyHeader()
             );
         });
     }
