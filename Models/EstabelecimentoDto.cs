@@ -17,6 +17,7 @@ namespace sistema_saude.Models
         public int id_bairro { get; set; }
         public int? id_cidade { get; set; }
         public int? id_estado { get; set; }
+        public int? id_serie { get; set; }
         public string cep { get; set; }
         public string complemento { get; set; }
         public string telefone { get; set; }

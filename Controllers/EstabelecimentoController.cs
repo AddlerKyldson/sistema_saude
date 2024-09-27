@@ -81,6 +81,8 @@ namespace sistema_saude.Controllers
                 .Include(c => c.Bairro)
                     .ThenInclude(b => b.Cidade)
                         .ThenInclude(c => c.Estado)
+                .Include(e => e.Tipo_Estabelecimento) // Incluindo tipo_estabelecimento
+                    .ThenInclude(te => te.Serie)      // Incluindo serie por meio de tipo_estabelecimento
                 .FirstOrDefaultAsync(c => c.id == id);
 
             if (Estabelecimento == null)
@@ -105,6 +107,7 @@ namespace sistema_saude.Controllers
                 id_bairro = Estabelecimento.id_bairro,
                 id_cidade = Estabelecimento.Bairro.Cidade.Id,
                 id_estado = Estabelecimento.Bairro.Cidade.Estado.Id,
+                id_serie = Estabelecimento.Tipo_Estabelecimento.Serie.Id,
                 cep = Estabelecimento.cep,
                 complemento = Estabelecimento.complemento,
                 telefone = Estabelecimento.telefone,

@@ -54,6 +54,22 @@ namespace sistema_saude.Controllers
             });
         }
 
+        [HttpGet("Serie/{idSerie}")]
+        public async Task<ActionResult<IEnumerable<Tipo_Estabelecimento>>> GetTipoEstabelecimentoPorSerie(int idSerie)
+        {
+            var tipoEstabelecimento = await _context.Tipo_Estabelecimento
+                                        .Where(r => r.Id_Serie == idSerie)
+                                        .ToListAsync();
+
+            if (tipoEstabelecimento.Count == 0)
+            {
+                //retornar um array vazio
+                return tipoEstabelecimento;
+            }
+
+            return tipoEstabelecimento;
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Tipo_Estabelecimento>> GetTipo_Estabelecimento(int id)
         {
