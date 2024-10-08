@@ -10,4 +10,6 @@ public class BairroDto
     public int? Id_Usuario_Cadastro { get; set; }
     public DateTimeOffset Data_Cadastro { get; set; }
     public string Slug { get; set; }
+
+    
 }

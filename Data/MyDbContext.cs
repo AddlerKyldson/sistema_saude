@@ -23,6 +23,7 @@ namespace sistema_saude.Data
         public DbSet<Serie> Serie { get; set; }
         public DbSet<Tipo_Estabelecimento> Tipo_Estabelecimento { get; set; }
         public DbSet<Inspecao> Inspecao { get; set; }
+        public DbSet<Denuncia> Denuncia { get; set; }
 
 
         // Outras tabelas conforme seus modelos
@@ -142,6 +143,13 @@ namespace sistema_saude.Data
                 .HasOne(i => i.Usuario) // Inspecao tem um Usuario
                 .WithMany(u => u.Inspecao) // Usuario tem muitas Inspeções
                 .HasForeignKey(i => i.Id_responsavel_tecnico); // Chave estrangeira em Inspecao
+
+            // Configuração do relacionamento de Denuncia com Bairro
+            modelBuilder
+                .Entity<Denuncia>()
+                .HasOne(d => d.Bairro) // Denuncia tem um Bairro
+                .WithMany(b => b.Denuncia) // Bairro tem muitas Denúncias
+                .HasForeignKey(d => d.Id_Bairro); // Chave estrangeira em Denuncia
         }
     }
 }
