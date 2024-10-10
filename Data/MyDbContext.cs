@@ -76,13 +76,12 @@ namespace sistema_saude.Data
                 .HasForeignKey(m => m.Id_Medicamento) // Chave estrangeira em Medicamento_Movimentacao_Item
                 .HasPrincipalKey(m => m.Codigo_Barras); // Chave primária em Medicamento
 
-            // Configuração do relacionamento de Estabelecimento com Bairro
+            // Configuração do relacionamento de Estabelecimento com Cidade
             modelBuilder
             .Entity<Estabelecimento>()
-            .HasOne(e => e.Bairro) // Defina a propriedade de navegação correta
-            .WithMany(b => b.Estabelecimento) // Relacionamento inverso, se aplicável
-            .HasForeignKey(e => e.id_bairro) // Especifica a chave estrangeira correta
-            .OnDelete(DeleteBehavior.Restrict); // Ajuste o comportamento de deleção se necessário
+            .HasOne(e => e.Cidade) // Estabelecimento tem uma Cidade
+            .WithMany(c => c.Estabelecimento) // Cidade tem muitos Estabelecimentos
+            .HasForeignKey(e => e.id_cidade); // Chave estrangeira em Estabelecimento
 
             //configurar relação entre estabelecimento_responsavel_legal e usuario
             modelBuilder.Entity<Estabelecimento_Responsavel_Legal>()
@@ -147,9 +146,9 @@ namespace sistema_saude.Data
             // Configuração do relacionamento de Denuncia com Bairro
             modelBuilder
                 .Entity<Denuncia>()
-                .HasOne(d => d.Bairro) // Denuncia tem um Bairro
+                .HasOne(d => d.Cidade) // Denuncia tem um Bairro
                 .WithMany(b => b.Denuncia) // Bairro tem muitas Denúncias
-                .HasForeignKey(d => d.Id_Bairro); // Chave estrangeira em Denuncia
+                .HasForeignKey(d => d.Id_Cidade); // Chave estrangeira em Denuncia
         }
     }
 }

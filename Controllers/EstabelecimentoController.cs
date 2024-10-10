@@ -78,8 +78,7 @@ namespace sistema_saude.Controllers
         public async Task<ActionResult<EstabelecimentoDto>> GetEstabelecimento(int id)
         {
             var Estabelecimento = await _context.Estabelecimento
-                .Include(c => c.Bairro)
-                    .ThenInclude(b => b.Cidade)
+                .Include(c => c.Cidade)
                         .ThenInclude(c => c.Estado)
                 .Include(e => e.Tipo_Estabelecimento) // Incluindo tipo_estabelecimento
                     .ThenInclude(te => te.Serie)      // Incluindo serie por meio de tipo_estabelecimento
@@ -104,10 +103,10 @@ namespace sistema_saude.Controllers
                 inscricao_estadual = Estabelecimento.inscricao_estadual,
                 logradouro = Estabelecimento.logradouro,
                 numero = Estabelecimento.numero,
-                id_bairro = Estabelecimento.id_bairro,
-                id_cidade = Estabelecimento.Bairro.Cidade.Id,
-                id_estado = Estabelecimento.Bairro.Cidade.Estado.Id,
-                id_serie = Estabelecimento.Tipo_Estabelecimento.Serie.Id,
+                bairro = Estabelecimento.bairro,
+                id_cidade = Estabelecimento.id_cidade,
+                id_estado = Estabelecimento.Cidade?.Estado?.Id ?? 0,  // Supondo que 0 seja um valor padrão aceitável
+                id_serie = Estabelecimento.Tipo_Estabelecimento?.Serie?.Id ?? 0,  // Supondo que 0 seja um valor padrão aceitável
                 cep = Estabelecimento.cep,
                 complemento = Estabelecimento.complemento,
                 telefone = Estabelecimento.telefone,
@@ -220,7 +219,8 @@ namespace sistema_saude.Controllers
                         inscricao_estadual = EstabelecimentoDto.inscricao_estadual,
                         logradouro = EstabelecimentoDto.logradouro,
                         numero = EstabelecimentoDto.numero,
-                        id_bairro = EstabelecimentoDto.id_bairro,
+                        bairro = EstabelecimentoDto.bairro,
+                        id_cidade = EstabelecimentoDto.id_cidade,
                         cep = EstabelecimentoDto.cep,
                         complemento = EstabelecimentoDto.complemento,
                         telefone = EstabelecimentoDto.telefone,
@@ -471,7 +471,8 @@ namespace sistema_saude.Controllers
             Estabelecimento.inscricao_estadual = EstabelecimentoDto.inscricao_estadual;
             Estabelecimento.logradouro = EstabelecimentoDto.logradouro;
             Estabelecimento.numero = EstabelecimentoDto.numero;
-            Estabelecimento.id_bairro = EstabelecimentoDto.id_bairro;
+            Estabelecimento.bairro = EstabelecimentoDto.bairro;
+            Estabelecimento.id_cidade = EstabelecimentoDto.id_cidade;
             Estabelecimento.cep = EstabelecimentoDto.cep;
             Estabelecimento.complemento = EstabelecimentoDto.complemento;
             Estabelecimento.telefone = EstabelecimentoDto.telefone;

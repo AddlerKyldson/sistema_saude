@@ -34,7 +34,6 @@ namespace sistema_saude.Controllers
 
             // Consulta básica de Denuncia com o relacionamento de Bairro
             var query = _context.Denuncia
-                                .Include(d => d.Bairro)
                                 .AsQueryable();
 
             // Filtragem por busca, se aplicável
@@ -45,7 +44,7 @@ namespace sistema_saude.Controllers
                     && (
                     d.Descricao.Contains(filtro_busca)
                     || d.Texto_Denuncia.Contains(filtro_busca)
-                    || d.Bairro.Nome.Contains(filtro_busca)
+                    || d.Bairro.Contains(filtro_busca)
                     )
                 );
             }
@@ -68,7 +67,7 @@ namespace sistema_saude.Controllers
                     Id = denuncia.Id,
                     Descricao = denuncia.Descricao,
                     Data_Recebimento = denuncia.Data_Recebimento,
-                    Id_Bairro = denuncia.Id_Bairro,
+                    Bairro = denuncia.Bairro,
                     Tipo_Denuncia = denuncia.Tipo_Denuncia,
                     Origem_Denuncia = denuncia.Origem_Denuncia,
                     Forma_Recebimento = denuncia.Forma_Recebimento,
@@ -84,11 +83,6 @@ namespace sistema_saude.Controllers
                     Id_Usuario_Alteracao = denuncia.Id_Usuario_Alteracao,
                     Data_Cadastro = denuncia.Data_Cadastro,
                     Data_Alteracao = denuncia.Data_Alteracao,
-                    Bairro = denuncia.Bairro == null ? null : new Bairro
-                    {
-                        Id = denuncia.Bairro.Id,
-                        Nome = denuncia.Bairro.Nome
-                    }
                 })
                 .ToListAsync();
 
@@ -102,8 +96,7 @@ namespace sistema_saude.Controllers
         public async Task<ActionResult<DenunciaDto>> GetDenuncia(int id)
         {
             var Denuncia = await _context.Denuncia
-                .Include(c => c.Bairro)
-                    .ThenInclude(b => b.Cidade)
+                .Include(c => c.Cidade)
                         .ThenInclude(c => c.Estado)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
@@ -117,9 +110,9 @@ namespace sistema_saude.Controllers
                 Id = Denuncia.Id,
                 Descricao = Denuncia.Descricao,
                 Data_Recebimento = Denuncia.Data_Recebimento,
-                Id_Bairro = Denuncia.Id_Bairro,
-                Id_Cidade = Denuncia.Bairro.Cidade.Id,
-                Id_Estado = Denuncia.Bairro.Cidade.Estado.Id,
+                Bairro = Denuncia.Bairro,
+                Id_Cidade = Denuncia.Id_Cidade,
+                Id_Estado = Denuncia.Cidade.Estado.Id,
                 Tipo_Denuncia = Denuncia.Tipo_Denuncia,
                 Origem_Denuncia = Denuncia.Origem_Denuncia,
                 Forma_Recebimento = Denuncia.Forma_Recebimento,
@@ -135,9 +128,9 @@ namespace sistema_saude.Controllers
                 Id_Usuario_Alteracao = Denuncia.Id_Usuario_Alteracao,
                 Data_Cadastro = Denuncia.Data_Cadastro,
                 Data_Alteracao = Denuncia.Data_Alteracao,
-                
+
             };
-        
+
 
 
             return DenunciaDto;
@@ -152,7 +145,8 @@ namespace sistema_saude.Controllers
             {
                 Descricao = denunciaDto.Descricao,
                 Data_Recebimento = denunciaDto.Data_Recebimento,
-                Id_Bairro = denunciaDto.Id_Bairro,
+                Bairro = denunciaDto.Bairro,
+                Id_Cidade = denunciaDto.Id_Cidade,
                 Tipo_Denuncia = denunciaDto.Tipo_Denuncia,
                 Origem_Denuncia = denunciaDto.Origem_Denuncia,
                 Forma_Recebimento = denunciaDto.Forma_Recebimento,
@@ -189,7 +183,8 @@ namespace sistema_saude.Controllers
 
             denuncia.Descricao = denunciaDto.Descricao;
             denuncia.Data_Recebimento = denunciaDto.Data_Recebimento;
-            denuncia.Id_Bairro = denunciaDto.Id_Bairro;
+            denuncia.Bairro = denunciaDto.Bairro;
+            denuncia.Id_Cidade = denunciaDto.Id_Cidade;
             denuncia.Tipo_Denuncia = denunciaDto.Tipo_Denuncia;
             denuncia.Origem_Denuncia = denunciaDto.Origem_Denuncia;
             denuncia.Forma_Recebimento = denunciaDto.Forma_Recebimento;

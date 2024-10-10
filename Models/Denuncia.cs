@@ -5,7 +5,8 @@ namespace sistema_saude.Models
         public int Id { get; set; }
         public string Descricao { get; set; }
         public DateTimeOffset? Data_Recebimento { get; set; }
-        public int Id_Bairro { get; set; }
+        public string? Bairro { get; set; }
+        public int? Id_Cidade { get; set; }
         public int Tipo_Denuncia { get; set; }
         public int Origem_Denuncia { get; set; }
         public int Forma_Recebimento { get; set; }
@@ -23,7 +24,7 @@ namespace sistema_saude.Models
         public DateTime? Data_Alteracao { get; set; } // Pode ser NULL
 
         // Navegação para Estado
-        public virtual Bairro Bairro { get; set; }
+        public virtual Cidade Cidade { get; set; }
 
         /* public virtual Bairro BairroNavigation { get; set; }
         public virtual Estado Id_Estado_CadastroNavigation { get; set; }

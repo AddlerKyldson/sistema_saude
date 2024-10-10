@@ -13,7 +13,8 @@ namespace sistema_saude.Models
         public DateTime? Data_Alteracao { get; set; } // Pode ser NULL
         public string Slug { get; set; }
         public ICollection<Bairro> Bairro { get; set; } // Lista de Bairros relacionados
-
+        public ICollection<Estabelecimento> Estabelecimento { get; set; }
+        public ICollection<Denuncia> Denuncia { get; set; }
         // Navegação para Regional
         public virtual Regional Regional { get; set; }
 
