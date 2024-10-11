@@ -16,6 +16,8 @@ namespace sistema_saude.Models
         public int Atendida { get; set; }
         public int? Orgao_Atendimento { get; set; }
         public DateTimeOffset? Data_Atendimento { get; set; }
+        public int? Orgao_Encaminhamento { get; set; }
+        public DateTimeOffset? Data_Encaminhamento { get; set; }
         public int? Motivo_Nao_Atendimento { get; set; }
         public int Status { get; set; }
         public int Id_Usuario_Cadastro { get; set; }

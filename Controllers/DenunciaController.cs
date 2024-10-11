@@ -77,6 +77,8 @@ namespace sistema_saude.Controllers
                     Atendida = denuncia.Atendida,
                     Orgao_Atendimento = denuncia.Orgao_Atendimento,
                     Data_Atendimento = denuncia.Data_Atendimento,
+                    Orgao_Encaminhamento = denuncia.Orgao_Encaminhamento,
+                    Data_Encaminhamento = denuncia.Data_Encaminhamento,
                     Motivo_Nao_Atendimento = denuncia.Motivo_Nao_Atendimento,
                     Status = denuncia.Status,
                     Id_Usuario_Cadastro = denuncia.Id_Usuario_Cadastro,
@@ -122,6 +124,8 @@ namespace sistema_saude.Controllers
                 Atendida = Denuncia.Atendida,
                 Orgao_Atendimento = Denuncia.Orgao_Atendimento,
                 Data_Atendimento = Denuncia.Data_Atendimento,
+                Orgao_Encaminhamento = Denuncia.Orgao_Encaminhamento,
+                Data_Encaminhamento = Denuncia.Data_Encaminhamento,
                 Motivo_Nao_Atendimento = Denuncia.Motivo_Nao_Atendimento,
                 Status = Denuncia.Status,
                 Id_Usuario_Cadastro = Denuncia.Id_Usuario_Cadastro,
@@ -156,6 +160,8 @@ namespace sistema_saude.Controllers
                 Atendida = denunciaDto.Atendida,
                 Orgao_Atendimento = denunciaDto.Orgao_Atendimento,
                 Data_Atendimento = denunciaDto.Data_Atendimento,
+                Orgao_Encaminhamento = denunciaDto.Orgao_Encaminhamento,
+                Data_Encaminhamento = denunciaDto.Data_Encaminhamento,
                 Motivo_Nao_Atendimento = denunciaDto.Motivo_Nao_Atendimento,
                 Status = 1,
                 Id_Usuario_Cadastro = denunciaDto.Id_Usuario_Cadastro,
@@ -194,6 +200,8 @@ namespace sistema_saude.Controllers
             denuncia.Atendida = denunciaDto.Atendida;
             denuncia.Orgao_Atendimento = denunciaDto.Orgao_Atendimento;
             denuncia.Data_Atendimento = denunciaDto.Data_Atendimento;
+            denuncia.Orgao_Encaminhamento = denunciaDto.Orgao_Encaminhamento;
+            denuncia.Data_Encaminhamento = denunciaDto.Data_Encaminhamento;
             denuncia.Motivo_Nao_Atendimento = denunciaDto.Motivo_Nao_Atendimento;
             denuncia.Status = 1;
             denuncia.Id_Usuario_Alteracao = denunciaDto.Id_Usuario_Alteracao;
