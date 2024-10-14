@@ -22,15 +22,15 @@ namespace sistema_saude.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CidadeDto>>> GetCidade()
         {
-            var cidades = await _context
-                .Cidade.Include(c => c.Regional) // Inclui Regional
-                .ThenInclude(r => r.Estado) // A partir do Regional, inclui Estado
+            var cidades = await _context.Cidade
+                .Include(c => c.Regional) // Inclui Regional
+                .Include(c => c.Estado) // Inclui Estado diretamente
                 .Select(c => new CidadeDto
                 {
                     Id = c.Id,
                     Nome = c.Nome,
-                    Nome_Regional = c.Regional.Nome,
-                    Sigla_Estado = c.Regional.Estado.Sigla // Corrige o acesso à sigla do estado
+                    Nome_Regional = c.Regional != null ? c.Regional.Nome : null, // Verifica se Regional existe
+                    Sigla_Estado = c.Estado.Sigla // Acessa diretamente a sigla do Estado
                 })
                 .ToListAsync();
 
@@ -38,20 +38,34 @@ namespace sistema_saude.Controllers
         }
 
         [HttpGet("Estado/{idEstado}")]
-        public async Task<ActionResult<IEnumerable<Cidade>>> GetCidadesPorEstado(int idEstado)
+        public async Task<ActionResult<IEnumerable<Cidade>>> GetCidadesPorEstado(string idEstado)
         {
-            var cidades = await _context.Cidade
-                                        .Where(r => r.Id_Estado == idEstado)
-                                        .ToListAsync();
+            // Verificar se o estado foi encontrado
+            var estado = await _context.Estado
+                                       .FirstOrDefaultAsync(e => e.Sigla == idEstado);
 
-            if (cidades.Count == 0)
+            if (estado == null)
             {
-                //retornar um array vazio
-                return cidades;
+                return NotFound("Estado não encontrado.");
             }
 
-            return cidades;
+            // Buscar as cidades associadas ao estado encontrado
+            var cidades = await _context.Cidade
+                                        .Where(c => c.Id_Estado == estado.Id)
+                                        .Select(c => new
+                                        {
+                                            c.Id,
+                                            c.Codigo_IBGE,
+                                            c.Nome,
+                                            c.Id_Regional,
+                                            c.Id_Estado,
+                                        })
+                                        .ToListAsync();
+
+            // Retornar a lista de cidades como JSON
+            return Ok(cidades);
         }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<CidadeDto>> GetCidade(int id)

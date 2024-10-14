@@ -77,54 +77,60 @@ namespace sistema_saude.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<EstabelecimentoDto>> GetEstabelecimento(int id)
         {
-            var Estabelecimento = await _context.Estabelecimento
-                .Include(c => c.Cidade)
-                        .ThenInclude(c => c.Estado)
-                .Include(e => e.Tipo_Estabelecimento) // Incluindo tipo_estabelecimento
-                    .ThenInclude(te => te.Serie)      // Incluindo serie por meio de tipo_estabelecimento
-                .FirstOrDefaultAsync(c => c.id == id);
+            // Buscar o estabelecimento com os relacionamentos necessários
+            var estabelecimento = await _context.Estabelecimento
+                .Include(e => e.Cidade)
+                    .ThenInclude(c => c.Estado)
+                .Include(e => e.Tipo_Estabelecimento)
+                    .ThenInclude(te => te.Serie)
+                .FirstOrDefaultAsync(e => e.id == id);
 
-            if (Estabelecimento == null)
+            // Verificar se o estabelecimento foi encontrado
+            if (estabelecimento == null)
             {
                 return NotFound();
             }
 
-            var EstabelecimentoDto = new EstabelecimentoDto
+            // Criar o DTO e garantir que todos os campos opcionais estejam tratados corretamente
+            var estabelecimentoDto = new EstabelecimentoDto
             {
-                id = Estabelecimento.id,
-                id_tipo_estabelecimento = Estabelecimento.id_tipo_estabelecimento,
-                razao_social = Estabelecimento.razao_social,
-                nome_fantasia = Estabelecimento.nome_fantasia,
-                cnpj = Estabelecimento.cnpj,
-                cnae = Estabelecimento.cnae,
-                data_inicio_funcionamento = Estabelecimento.data_inicio_funcionamento,
-                grau_risco = Estabelecimento.grau_risco,
-                inscricao_municipal = Estabelecimento.inscricao_municipal,
-                inscricao_estadual = Estabelecimento.inscricao_estadual,
-                logradouro = Estabelecimento.logradouro,
-                numero = Estabelecimento.numero,
-                bairro = Estabelecimento.bairro,
-                id_cidade = Estabelecimento.id_cidade,
-                id_estado = Estabelecimento.Cidade?.Estado?.Id ?? 0,  // Supondo que 0 seja um valor padrão aceitável
-                id_serie = Estabelecimento.Tipo_Estabelecimento?.Serie?.Id ?? 0,  // Supondo que 0 seja um valor padrão aceitável
-                cep = Estabelecimento.cep,
-                complemento = Estabelecimento.complemento,
-                telefone = Estabelecimento.telefone,
-                email = Estabelecimento.email,
-                protocolo_funcionamento = Estabelecimento.protocolo_funcionamento,
-                passivo_alvara_sanitario = Estabelecimento.passivo_alvara_sanitario,
-                n_alvara_sanitario = Estabelecimento.n_alvara_sanitario,
-                coleta_residuos = Estabelecimento.coleta_residuos,
-                autuacao_visa = Estabelecimento.autuacao_visa,
-                forma_abastecimento = Estabelecimento.forma_abastecimento,
-                status = Estabelecimento.status,
-                id_usuario_cadastro = Estabelecimento.id_usuario_cadastro,
-                data_cadastro = Estabelecimento.data_cadastro,
-                slug = Estabelecimento.slug,
+                id = estabelecimento.id,
+                id_tipo_estabelecimento = estabelecimento.id_tipo_estabelecimento,
+                razao_social = estabelecimento.razao_social,
+                nome_fantasia = estabelecimento.nome_fantasia,
+                cnpj = estabelecimento.cnpj,
+                cnae = estabelecimento.cnae,
+                cnae_secundario = estabelecimento.cnae_secundario,
+                passivo_analise_projeto = estabelecimento.passivo_analise_projeto,
+                data_inicio_funcionamento = estabelecimento.data_inicio_funcionamento,
+                grau_risco = estabelecimento.grau_risco,
+                inscricao_municipal = estabelecimento.inscricao_municipal,
+                inscricao_estadual = estabelecimento.inscricao_estadual,
+                logradouro = estabelecimento.logradouro,
+                numero = estabelecimento.numero,
+                bairro = estabelecimento.bairro,
+                id_cidade = estabelecimento.id_cidade,
+                id_estado = estabelecimento.Cidade?.Estado?.Sigla ?? "N/A", // Tratamento seguro para valores nulos
+                id_serie = estabelecimento.Tipo_Estabelecimento?.Serie?.Id ?? 0, // Valor padrão caso seja nulo
+                cep = estabelecimento.cep,
+                complemento = estabelecimento.complemento,
+                telefone = estabelecimento.telefone,
+                email = estabelecimento.email,
+                protocolo_funcionamento = estabelecimento.protocolo_funcionamento,
+                passivo_alvara_sanitario = estabelecimento.passivo_alvara_sanitario,
+                n_alvara_sanitario = estabelecimento.n_alvara_sanitario,
+                coleta_residuos = estabelecimento.coleta_residuos,
+                autuacao_visa = estabelecimento.autuacao_visa,
+                forma_abastecimento = estabelecimento.forma_abastecimento,
+                status = estabelecimento.status,
+                id_usuario_cadastro = estabelecimento.id_usuario_cadastro,
+                data_cadastro = estabelecimento.data_cadastro,
+                slug = estabelecimento.slug,
             };
 
-            return EstabelecimentoDto;
+            return Ok(estabelecimentoDto);
         }
+
 
         [HttpGet("{id}/responsaveis-legais")]
         public async Task<ActionResult<List<Estabelecimento_Responsavel_LegalDto>>> GetResponsaveisLegais(int id)
@@ -213,6 +219,8 @@ namespace sistema_saude.Controllers
                         nome_fantasia = EstabelecimentoDto.nome_fantasia,
                         cnpj = EstabelecimentoDto.cnpj,
                         cnae = EstabelecimentoDto.cnae,
+                        cnae_secundario = EstabelecimentoDto.cnae_secundario,
+                        passivo_analise_projeto = EstabelecimentoDto.passivo_analise_projeto,
                         data_inicio_funcionamento = EstabelecimentoDto.data_inicio_funcionamento,
                         grau_risco = EstabelecimentoDto.grau_risco,
                         inscricao_municipal = EstabelecimentoDto.inscricao_municipal,
@@ -465,6 +473,8 @@ namespace sistema_saude.Controllers
             Estabelecimento.nome_fantasia = EstabelecimentoDto.nome_fantasia;
             Estabelecimento.cnpj = EstabelecimentoDto.cnpj;
             Estabelecimento.cnae = EstabelecimentoDto.cnae;
+            Estabelecimento.cnae_secundario = EstabelecimentoDto.cnae_secundario;
+            Estabelecimento.passivo_analise_projeto = EstabelecimentoDto.passivo_analise_projeto;
             Estabelecimento.data_inicio_funcionamento = EstabelecimentoDto.data_inicio_funcionamento;
             Estabelecimento.grau_risco = EstabelecimentoDto.grau_risco;
             Estabelecimento.inscricao_municipal = EstabelecimentoDto.inscricao_municipal;

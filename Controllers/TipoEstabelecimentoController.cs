@@ -83,6 +83,23 @@ namespace sistema_saude.Controllers
             return tipoEstabelecimentos;
         }
 
+        //Buscar por cnae
+        [HttpGet("cnae/{cnae}")]
+        public async Task<ActionResult<Tipo_Estabelecimento>> GetTipoEstabelecimentoPorCnae(string cnae)
+        {
+            var tipoEstabelecimentos = await _context.Tipo_Estabelecimento
+                                        .Where(r => r.cnae == cnae)
+                                        .FirstOrDefaultAsync();
+
+            if (tipoEstabelecimentos == null)
+            {
+                //retornar um array vazio
+                return tipoEstabelecimentos;
+            }
+
+            return tipoEstabelecimentos;
+        }
+
         [HttpPost]
         public async Task<ActionResult<Tipo_Estabelecimento>> PostTipo_Estabelecimento(
             [FromBody] Tipo_EstabelecimentoDto tipoEstabelecimentoDto
@@ -91,6 +108,10 @@ namespace sistema_saude.Controllers
             var tipoEstabelecimento = new Tipo_Estabelecimento
             {
                 Nome = tipoEstabelecimentoDto.Nome,
+                cnae = tipoEstabelecimentoDto.cnae,
+                Grau_Risco = tipoEstabelecimentoDto.Grau_Risco,
+                Passivo_Alvara_Sanitario = tipoEstabelecimentoDto.Passivo_Alvara_Sanitario,
+                Passivo_Analise_Projeto = tipoEstabelecimentoDto.Passivo_Analise_Projeto,
                 Id_Serie = tipoEstabelecimentoDto.Id_Serie,
                 Status = tipoEstabelecimentoDto.Status,
                 Id_Usuario_Cadastro = tipoEstabelecimentoDto.Id_Usuario_Cadastro,
@@ -118,6 +139,10 @@ namespace sistema_saude.Controllers
             }
 
             tipoEstabelecimento.Nome = tipoEstabelecimentoUpdateDto.Nome;
+            tipoEstabelecimento.cnae = tipoEstabelecimentoUpdateDto.cnae;
+            tipoEstabelecimento.Grau_Risco = tipoEstabelecimentoUpdateDto.Grau_Risco;
+            tipoEstabelecimento.Passivo_Alvara_Sanitario = tipoEstabelecimentoUpdateDto.Passivo_Alvara_Sanitario;
+            tipoEstabelecimento.Passivo_Analise_Projeto = tipoEstabelecimentoUpdateDto.Passivo_Analise_Projeto;
             tipoEstabelecimento.Id_Serie = tipoEstabelecimentoUpdateDto.Id_Serie;
             tipoEstabelecimento.Status = tipoEstabelecimentoUpdateDto.Status;
             tipoEstabelecimento.Data_Alteracao = DateTime.UtcNow;

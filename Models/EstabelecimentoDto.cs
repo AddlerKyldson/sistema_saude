@@ -8,6 +8,8 @@ namespace sistema_saude.Models
         public string nome_fantasia { get; set; }
         public string cnpj { get; set; }
         public string? cnae { get; set; }
+        public string? cnae_secundario { get; set; }
+        public int? passivo_analise_projeto { get; set; }
         public DateTimeOffset? data_inicio_funcionamento { get; set; }
         public int? grau_risco { get; set; }
         public string? inscricao_municipal { get; set; }
@@ -16,7 +18,7 @@ namespace sistema_saude.Models
         public string? numero { get; set; }
         public string? bairro { get; set; }
         public int? id_cidade { get; set; }
-        public int? id_estado { get; set; }
+        public string? id_estado { get; set; }
         public int? id_serie { get; set; }
         public string? cep { get; set; }
         public string? complemento { get; set; }

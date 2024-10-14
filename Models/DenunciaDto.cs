@@ -7,7 +7,7 @@ namespace sistema_saude.Models
         public DateTimeOffset? Data_Recebimento { get; set; }
         public string? Bairro { get; set; }
         public int? Id_Cidade { get; set; }
-        public int? Id_Estado { get; set; }
+        public string? Id_Estado { get; set; }
         public int Tipo_Denuncia { get; set; }
         public int Origem_Denuncia { get; set; }
         public int Forma_Recebimento { get; set; }

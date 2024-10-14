@@ -5,11 +5,11 @@ namespace sistema_saude.Models
         public int Id { get; set; }
         public string Nome { get; set; }
         public string Sigla { get; set; }
-        public int Id_Usuario_Cadastro { get; set; }
+        public int? Id_Usuario_Cadastro { get; set; }
         public int? Id_Usuario_Alteracao { get; set; }
-        public DateTimeOffset Data_Cadastro { get; set; }
+        public DateTimeOffset? Data_Cadastro { get; set; }
         public DateTime? Data_Alteracao { get; set; } // Pode ser NULL
-        public string Slug { get; set; }
+        public string? Slug { get; set; }
 
         // Relacionamento com Região
         

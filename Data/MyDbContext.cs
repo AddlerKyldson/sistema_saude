@@ -36,19 +36,19 @@ namespace sistema_saude.Data
                 .WithMany(b => b.Regional)
                 .HasForeignKey(p => p.Id_Estado); // Chave estrangeira em Região
 
-            // Configuração do relacionamento de Cidade com Regional
             modelBuilder
                 .Entity<Cidade>()
-                .HasOne(c => c.Regional) // Cidade tem um Regional
+                .HasOne(c => c.Regional) // Cidade tem um Regional opcionalmente
                 .WithMany(r => r.Cidade) // Regional tem muitas Cidades
-                .HasForeignKey(c => c.Id_Regional); // Chave estrangeira em Cidade
+                .HasForeignKey(c => c.Id_Regional)
+                .IsRequired(false); // Chave estrangeira opcional em Cidade
 
-            // Configuração do relacionamento de Cidade com Estado
             modelBuilder
                 .Entity<Cidade>()
-                .HasOne(c => c.Estado) // Cidade tem um Estado
+                .HasOne(c => c.Estado) // Cidade tem um Estado opcionalmente
                 .WithMany(e => e.Cidade) // Estado tem muitas Cidades
-                .HasForeignKey(c => c.Id_Estado); // Chave estrangeira em Cidade
+                .HasForeignKey(c => c.Id_Estado)
+                .IsRequired(false); // Chave estrangeira opcional
 
             // Configuração do relacionamento de Bairro com Cidade
             modelBuilder
@@ -76,12 +76,14 @@ namespace sistema_saude.Data
                 .HasForeignKey(m => m.Id_Medicamento) // Chave estrangeira em Medicamento_Movimentacao_Item
                 .HasPrincipalKey(m => m.Codigo_Barras); // Chave primária em Medicamento
 
-            // Configuração do relacionamento de Estabelecimento com Cidade
+            // Configuração do relacionamento de Estabelecimento com Cidade usando codigo_ibge
             modelBuilder
-            .Entity<Estabelecimento>()
-            .HasOne(e => e.Cidade) // Estabelecimento tem uma Cidade
-            .WithMany(c => c.Estabelecimento) // Cidade tem muitos Estabelecimentos
-            .HasForeignKey(e => e.id_cidade); // Chave estrangeira em Estabelecimento
+                .Entity<Estabelecimento>()
+                .HasOne(e => e.Cidade) // Estabelecimento tem uma Cidade
+                .WithMany(c => c.Estabelecimento) // Cidade tem muitos Estabelecimentos
+                .HasForeignKey(e => e.id_cidade) // Chave estrangeira em Estabelecimento (codigo_ibge)
+                .HasPrincipalKey(c => c.Codigo_IBGE); // Define codigo_ibge como chave principal em Cidade
+
 
             //configurar relação entre estabelecimento_responsavel_legal e usuario
             modelBuilder.Entity<Estabelecimento_Responsavel_Legal>()

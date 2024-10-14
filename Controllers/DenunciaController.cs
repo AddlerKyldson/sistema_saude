@@ -114,7 +114,7 @@ namespace sistema_saude.Controllers
                 Data_Recebimento = Denuncia.Data_Recebimento,
                 Bairro = Denuncia.Bairro,
                 Id_Cidade = Denuncia.Id_Cidade,
-                Id_Estado = Denuncia.Cidade.Estado.Id,
+                Id_Estado = Denuncia.Cidade.Estado.Sigla,
                 Tipo_Denuncia = Denuncia.Tipo_Denuncia,
                 Origem_Denuncia = Denuncia.Origem_Denuncia,
                 Forma_Recebimento = Denuncia.Forma_Recebimento,
