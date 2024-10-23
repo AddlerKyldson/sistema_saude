@@ -4,9 +4,9 @@ namespace sistema_saude.Models
     {
         public int id { get; set; }
         public int? id_tipo_estabelecimento { get; set; }
-        public string razao_social { get; set; }
+        public string? razao_social { get; set; }
         public string nome_fantasia { get; set; }
-        public string cnpj { get; set; }
+        public string? cnpj { get; set; }
         public string? cnae { get; set; }
         public string? cnae_secundario { get; set; }
         public int? passivo_analise_projeto { get; set; }
@@ -30,6 +30,13 @@ namespace sistema_saude.Models
         public int? coleta_residuos { get; set; }
         public int? autuacao_visa { get; set; }
         public int? forma_abastecimento { get; set; }
+        public int? restaurantes_local { get; set; }
+        public int? restaurantes_tamanho { get; set; }
+        public int? restaurantes_pavimentos { get; set; }
+        public int? restaurantes_lotacao { get; set; }
+        public int? restaurantes_subsolo { get; set; }
+        public int? restaurantes_combustivel { get; set; }
+        public int? restaurantes_gas { get; set; }
         public int status { get; set; }
         public int id_usuario_cadastro { get; set; }
         public DateTimeOffset data_cadastro { get; set; }
