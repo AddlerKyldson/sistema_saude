@@ -8,6 +8,7 @@ namespace sistema_saude.Models
         public string? Bairro { get; set; }
         public int? Id_Cidade { get; set; }
         public string? Id_Estado { get; set; }
+        public int? id_estabelecimento { get; set; }
         public int Tipo_Denuncia { get; set; }
         public int Origem_Denuncia { get; set; }
         public int Forma_Recebimento { get; set; }

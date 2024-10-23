@@ -115,6 +115,7 @@ namespace sistema_saude.Controllers
                 Bairro = Denuncia.Bairro,
                 Id_Cidade = Denuncia.Id_Cidade,
                 Id_Estado = Denuncia.Cidade.Estado.Sigla,
+                id_estabelecimento = Denuncia.id_estabelecimento,
                 Tipo_Denuncia = Denuncia.Tipo_Denuncia,
                 Origem_Denuncia = Denuncia.Origem_Denuncia,
                 Forma_Recebimento = Denuncia.Forma_Recebimento,
@@ -151,6 +152,7 @@ namespace sistema_saude.Controllers
                 Data_Recebimento = denunciaDto.Data_Recebimento,
                 Bairro = denunciaDto.Bairro,
                 Id_Cidade = denunciaDto.Id_Cidade,
+                id_estabelecimento = denunciaDto.id_estabelecimento,
                 Tipo_Denuncia = denunciaDto.Tipo_Denuncia,
                 Origem_Denuncia = denunciaDto.Origem_Denuncia,
                 Forma_Recebimento = denunciaDto.Forma_Recebimento,
@@ -191,6 +193,7 @@ namespace sistema_saude.Controllers
             denuncia.Data_Recebimento = denunciaDto.Data_Recebimento;
             denuncia.Bairro = denunciaDto.Bairro;
             denuncia.Id_Cidade = denunciaDto.Id_Cidade;
+            denuncia.id_estabelecimento = denunciaDto.id_estabelecimento;
             denuncia.Tipo_Denuncia = denunciaDto.Tipo_Denuncia;
             denuncia.Origem_Denuncia = denunciaDto.Origem_Denuncia;
             denuncia.Forma_Recebimento = denunciaDto.Forma_Recebimento;
